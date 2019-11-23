@@ -1,0 +1,140 @@
+﻿{
+  "stats": {
+    "totalHits": 2,
+    "searchEngineTimeInMillis": 119,
+    "searchEngineRoundTripTimeInMillis": 121,
+    "searchProcessingTimeInMillis": 122
+  },
+  "query": null,
+  "documentList": {
+    "id": "documents",
+    "displayName": "Documents",
+    "numberOfHits": 2,
+    "documents": [
+      {
+        "@timestamp": "2018-12-10T08:58:30.000Z",
+        "_id": "EgSeo2cBGkMTjkBAi5-N",
+        "_type": "doc",
+        "beat": {
+          "hostname": "WSP2460C",
+          "name": "epi-server-log",
+          "version": "6.5.0"
+        },
+        "fileset": {
+          "module": "iis",
+          "name": "access"
+        },
+        "host": {
+          "name": "epi-server-log"
+        },
+        "iis": {
+          "access": {
+            "method": "GET",
+            "port": "80",
+            "query_string": "-",
+            "referrer": "-",
+            "remote_ip": "172.30.46.192",
+            "request_time_ms": "205",
+            "response_code": "404",
+            "server_ip": "10.36.44.84",
+            "sub_status": "0",
+            "url": "/privat",
+            "user_agent": {
+              "device": "Other",
+              "major": "70",
+              "minor": "0",
+              "name": "Chrome",
+              "original": "Mozilla/5.0+(Windows+NT+6.1;+Win64;+x64)+AppleWebKit/537.36+(KHTML,+like+Gecko)+Chrome/70.0.3538.102+Safari/537.36",
+              "os": "Windows",
+              "os_name": "Windows",
+              "patch": "3538"
+            },
+            "user_name": "emil.astrom@seb.se",
+            "win32_status": "2"
+          }
+        },
+        "input": {
+          "type": "log"
+        },
+        "offset": 223103,
+        "prospector": {
+          "type": "log"
+        },
+        "read_timestamp": "2018-12-12T18:12:07.896Z",
+        "source": "D:\\log\\IIS\\W3SVC10\\u_ex181210.log"
+      },
+      {
+        "@timestamp": "2018-12-10T07:54:01.000Z",
+        "_id": "wgSeo2cBGkMTjkBAc5S0",
+        "_type": "doc",
+        "beat": {
+          "hostname": "WSP2460C",
+          "name": "epi-server-log",
+          "version": "6.5.0"
+        },
+        "fileset": {
+          "module": "iis",
+          "name": "access"
+        },
+        "host": {
+          "name": "epi-server-log"
+        },
+        "iis": {
+          "access": {
+            "method": "GET",
+            "port": "80",
+            "query_string": "-",
+            "referrer": "-",
+            "remote_ip": "172.30.46.192",
+            "request_time_ms": "363",
+            "response_code": "404",
+            "server_ip": "10.36.44.84",
+            "sub_status": "0",
+            "url": "/privat",
+            "user_agent": {
+              "device": "Other",
+              "major": "70",
+              "minor": "0",
+              "name": "Chrome",
+              "original": "Mozilla/5.0+(Windows+NT+6.1;+Win64;+x64)+AppleWebKit/537.36+(KHTML,+like+Gecko)+Chrome/70.0.3538.102+Safari/537.36",
+              "os": "Windows",
+              "os_name": "Windows",
+              "patch": "3538"
+            },
+            "user_name": "emil.astrom@seb.se",
+            "win32_status": "2"
+          }
+        },
+        "input": {
+          "type": "log"
+        },
+        "offset": 190332,
+        "prospector": {
+          "type": "log"
+        },
+        "read_timestamp": "2018-12-12T18:12:03.338Z",
+        "source": "D:\\log\\IIS\\W3SVC10\\u_ex181210.log"
+      }
+    ],
+    "pagination": {
+      "offset": 0,
+      "hitsPerPage": 20,
+      "firstPage": null,
+      "previousPage": null,
+      "nextPage": null,
+      "lastPage": null,
+      "pages": [
+        {
+          "displayName": "1",
+          "selected": true,
+          "query": "hits=20&q=%2Fprivat&range!gte!@timestamp=now-30d%2Fd&offset=0"
+        }
+      ]
+    },
+    "sortOptions": []
+  },
+  "facets": [],
+  "spell": null,
+  "quicklinks": null,
+  "errorMessages": []
+}

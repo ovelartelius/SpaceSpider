@@ -1,0 +1,164 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="textBoxIgnorePatterns.Text" xml:space="preserve">
+    <value>^.*pow.*$
+^.*\/powershell\/.*$
+^.*\/privat\/ekonomikollen\/artiklar\/bostadsmarknaden-2016-ar-det-dags-att-binda-rantan$
+^.*\/privat\/ekonomikollen\/artiklar\/darfor-ar-det-viktigt-att-amortera$
+^.*\/privat\/ekonomikollen\/artiklar\/flytta-utomlands-tank-pa-det-har$
+^.*\/privat\/ekonomikollen\/artiklar\/fyra-bostadstips-infor-2016$
+^.*\/privat\/ekonomikollen\/artiklar\/gardera-sig-infor-en-osaker-framtid$
+^.*\/privat\/ekonomikollen\/artiklar\/har-ar-nasta-ars-viktigaste-planboksnyheter$
+^.*\/privat\/ekonomikollen\/artiklar\/hjalp-att-hitta-ratt-pensionssparande$
+^.*\/privat\/ekonomikollen\/artiklar\/hjalp-att-hitta-ratt-pensionssparande/avdragsratt-och-pensionssparande$
+^.*\/privat\/ekonomikollen\/artiklar\/hon-amorterade-och-kunde-kopa-dromhuset-i-spanien$
+^.*\/privat\/ekonomikollen\/artiklar\/hur-mycket-bostad-har-du-rad-med$
+^.*\/privat\/ekonomikollen\/artiklar\/hur-skaffar-jag-enklast-koll-pa-min-pension$
+^.*\/privat\/ekonomikollen\/artiklar\/kronan-tros-blir-starkare-under-hosten$
+^.*\/privat\/ekonomikollen\/artiklar\/nu-ar-det-hog-tid-att-valja-nytt-pensionssparande$
+^.*\/privat\/ekonomikollen\/artiklar\/nya-lagen-kan-gora-barnen-arvlosa$
+^.*\/privat\/ekonomikollen\/artiklar\/sa-far-du-rad-med-julen$
+^.*\/privat\/ekonomikollen\/artiklar\/sa-paverkar-nya-amorteringskravet-dig$
+^.*\/privat\/ekonomikollen\/artiklar\/sa-paverkas-du-av-forslaget-om-hojd-pensionsalder$
+^.*\/privat\/ekonomikollen\/artiklar\/sa-paverkas-du-av-rantesankningen$
+^.*\/privat\/ekonomikollen\/artiklar\/ska-du-ta-lon-eller-utdelning-fran-ditt-foretag-2016$
+^.*\/privat\/ekonomikollen\/artiklar\/stark-tillvaxt-inom-hallbara-investeringar$
+^.*\/privat\/ekonomikollen\/artiklar\/sverige-har-en-unik-position-i-varlden$
+^.*\/privat\/ekonomikollen\/artiklar\/tank-langsiktigt-och-ta-hojd-for-forandringar$
+^.*\/privat\/ekonomikollen\/artiklar\/tips-infor-arsskiftet-nu-maste-du-ansoka-om-jamkning-varje-ar$
+^.*\/privat\/ekonomikollen\/artiklar\/varfor-ar-inte-borantan-noll$
+^.*\/privat\/ekonomikollen\/artiklar\/viktigt-att-se-over-pensionssparandet$
+^.*\/privat\/ekonomikollen\/artiklar\/vila-planboken-efter-julhelgerna$
+^.*\/privat\/ekonomikollen\/sparande-och-pension/hur-mycket-vill-du-ha-i-pension$
+^.*\/privat\/ekonomikollen\/vardagsekonomi/detta-ska-du-ha-extra-koll-pa-i-deklarationen$</value>
+  </data>
+  <metadata name="openFileDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
+  <metadata name="backgroundWorkerUrlCheck.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>157, 17</value>
+  </metadata>
+  <metadata name="backgroundWorkerLoadCsv.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>321, 17</value>
+  </metadata>
+  <data name="textBoxSearchUrl.Text" xml:space="preserve">
+    <value>https://pws-search1-prod.sebank.se/rest/apps/stats/searchers/paths?hits=20&amp;q={oldUrlPathAndQuery}&amp;range!gte!@timestamp=now-180d/d&amp;filter!must!iis.access.response_code=200&amp;filter!must!iis.access.hostname=W3SVC2&amp;filter!should!iis.access.server_name=WSP1918A&amp;filter!should!iis.access.server_name=WSP1919A&amp;filter!should!iis.access.server_name=WSP1920A&amp;filter!should!iis.access.server_name=WSP1921A</value>
+  </data>
+</root>
