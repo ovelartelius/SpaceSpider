@@ -31,7 +31,8 @@ namespace CheckRequestedUrls
                 SearchUrl = textBoxSearchUrl.Text,
                 OutputDirectory = textBoxOutputDirectory.Text,
                 RunOverVpn = checkBoxOverVpn.Checked,
-                IgnoreSearch = checkBoxIgnoreSearch.Checked
+                IgnoreSearch = checkBoxIgnoreSearch.Checked,
+                CheckDomainBeforeStart = checkBoxCheckDomainBeforeStart.Checked
             };
 
             var patterns = textBoxIgnorePatterns.Text.Split('\n');
@@ -51,20 +52,20 @@ namespace CheckRequestedUrls
 
             var spider = new Spider();
             var newSiteUri = new Uri(workLoad.NewSiteDomain);
-            // First we check that the new site domain is working.
-            var newSitePageLink = spider.CheckUrl(newSiteUri.AbsoluteUri, new List<string>(), workLoad.UserAgent);
 
-            if (newSitePageLink.StatusCode != System.Net.HttpStatusCode.OK)
+            if (workLoad.CheckDomainBeforeStart)
             {
-                Log($"Can not start the job. New site domain is not working: {workLoad.NewSiteDomain} - StatusCode:{newSitePageLink.StatusCode}, expected {System.Net.HttpStatusCode.OK}");
-                return;
+                // First we check that the new site domain is working.
+                var newSitePageLink = spider.CheckUrl(newSiteUri.AbsoluteUri, new List<string>(), workLoad.UserAgent);
+
+                if (newSitePageLink.StatusCode != System.Net.HttpStatusCode.OK)
+                {
+                    Log($"Can not start the job. New site domain is not working: {workLoad.NewSiteDomain} - StatusCode:{newSitePageLink.StatusCode}, expected {System.Net.HttpStatusCode.OK}");
+                    return;
+                }
             }
-            else
-            {
-                
-                backgroundWorkerLoadCsv.RunWorkerAsync(workLoad);
-                //backgroundWorkerLoadCsv_DoWork
-            }
+
+            backgroundWorkerLoadCsv.RunWorkerAsync(workLoad);
 
         }
 
@@ -104,7 +105,16 @@ namespace CheckRequestedUrls
                 try
                 {
                     var oldUri = new Uri(url);
-                    var newUrl = $"{newSiteUri.Scheme}://{newSiteUri.Host}{oldUri.PathAndQuery}";
+                    var newUrl = string.Empty;
+                    if (newSiteUri.Port != 80)
+                    {
+                        newUrl = $"{newSiteUri.Scheme}://{newSiteUri.Host}:{newSiteUri.Port}{oldUri.PathAndQuery}";
+                    }
+                    else
+                    {
+                        newUrl = $"{newSiteUri.Scheme}://{newSiteUri.Host}{oldUri.PathAndQuery}";
+                    }
+                    
 
                     //Log($"Convert {value.Url} to {newUrl}");
                     SpiderPageLink spiderPageLink = new SpiderPageLink { Url = newUrl };
@@ -124,7 +134,7 @@ namespace CheckRequestedUrls
 
                     if (!spiderPageLink.Ignored)
                     {
-                        spiderPageLink = spider.CheckUrl(newUrl, new List<string>());
+                        spiderPageLink = spider.CheckUrl(newUrl, new List<string>(), workLoad.UserAgent);
 
                         if (!workLoad.IgnoreSearch)
                         {

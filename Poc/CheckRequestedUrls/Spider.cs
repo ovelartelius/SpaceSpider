@@ -12,6 +12,13 @@ namespace CheckRequestedUrls
 {
     public class Spider
     {
+        private CookieContainer _cookieContainer;
+
+        public Spider()
+        {
+            _cookieContainer = new CookieContainer();
+        }
+
         public bool ValidateUrl(string url)
         {
             var result = false;
@@ -60,6 +67,13 @@ namespace CheckRequestedUrls
                 var uri = new Uri(url);
                 webRequest = (HttpWebRequest)WebRequest.Create(uri);
 
+                // Check if we have any cookies that we want to add to the request.
+                if (_cookieContainer != null && _cookieContainer.Count != 0)
+                {
+                    webRequest.CookieContainer = _cookieContainer;
+                }
+                
+
                 if (!string.IsNullOrEmpty(proxyAddress))
                 {
                     var webProxy = new WebProxy(proxyAddress);
@@ -81,10 +95,14 @@ namespace CheckRequestedUrls
 
                 webResponse = (HttpWebResponse)webRequest.GetResponse();
                 result.ContentType = webResponse.ContentType;
-
+                if (webResponse.Cookies.Count != 0)
+                {
+                    _cookieContainer?.Add(webResponse.Cookies);
+                }
                 // Only download content for ContentType that are related to HTml, text, xml etc.
                 if (result.ContentType.StartsWith("text/") || result.ContentType.StartsWith("application/javascript")) //TODO: LOW: Detta bör sättas i manifestet så att man kan styra vilka type man vill ladda ned.
                 {
+                    
                     var responseStream = webResponse.GetResponseStream();
                     if (responseStream != null)
                     {

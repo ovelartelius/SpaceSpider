@@ -117,38 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="textBoxIgnorePatterns.Text" xml:space="preserve">
-    <value>^.*pow.*$
-^.*\/powershell\/.*$
-^.*\/privat\/ekonomikollen\/artiklar\/bostadsmarknaden-2016-ar-det-dags-att-binda-rantan$
-^.*\/privat\/ekonomikollen\/artiklar\/darfor-ar-det-viktigt-att-amortera$
-^.*\/privat\/ekonomikollen\/artiklar\/flytta-utomlands-tank-pa-det-har$
-^.*\/privat\/ekonomikollen\/artiklar\/fyra-bostadstips-infor-2016$
-^.*\/privat\/ekonomikollen\/artiklar\/gardera-sig-infor-en-osaker-framtid$
-^.*\/privat\/ekonomikollen\/artiklar\/har-ar-nasta-ars-viktigaste-planboksnyheter$
-^.*\/privat\/ekonomikollen\/artiklar\/hjalp-att-hitta-ratt-pensionssparande$
-^.*\/privat\/ekonomikollen\/artiklar\/hjalp-att-hitta-ratt-pensionssparande/avdragsratt-och-pensionssparande$
-^.*\/privat\/ekonomikollen\/artiklar\/hon-amorterade-och-kunde-kopa-dromhuset-i-spanien$
-^.*\/privat\/ekonomikollen\/artiklar\/hur-mycket-bostad-har-du-rad-med$
-^.*\/privat\/ekonomikollen\/artiklar\/hur-skaffar-jag-enklast-koll-pa-min-pension$
-^.*\/privat\/ekonomikollen\/artiklar\/kronan-tros-blir-starkare-under-hosten$
-^.*\/privat\/ekonomikollen\/artiklar\/nu-ar-det-hog-tid-att-valja-nytt-pensionssparande$
-^.*\/privat\/ekonomikollen\/artiklar\/nya-lagen-kan-gora-barnen-arvlosa$
-^.*\/privat\/ekonomikollen\/artiklar\/sa-far-du-rad-med-julen$
-^.*\/privat\/ekonomikollen\/artiklar\/sa-paverkar-nya-amorteringskravet-dig$
-^.*\/privat\/ekonomikollen\/artiklar\/sa-paverkas-du-av-forslaget-om-hojd-pensionsalder$
-^.*\/privat\/ekonomikollen\/artiklar\/sa-paverkas-du-av-rantesankningen$
-^.*\/privat\/ekonomikollen\/artiklar\/ska-du-ta-lon-eller-utdelning-fran-ditt-foretag-2016$
-^.*\/privat\/ekonomikollen\/artiklar\/stark-tillvaxt-inom-hallbara-investeringar$
-^.*\/privat\/ekonomikollen\/artiklar\/sverige-har-en-unik-position-i-varlden$
-^.*\/privat\/ekonomikollen\/artiklar\/tank-langsiktigt-och-ta-hojd-for-forandringar$
-^.*\/privat\/ekonomikollen\/artiklar\/tips-infor-arsskiftet-nu-maste-du-ansoka-om-jamkning-varje-ar$
-^.*\/privat\/ekonomikollen\/artiklar\/varfor-ar-inte-borantan-noll$
-^.*\/privat\/ekonomikollen\/artiklar\/viktigt-att-se-over-pensionssparandet$
-^.*\/privat\/ekonomikollen\/artiklar\/vila-planboken-efter-julhelgerna$
-^.*\/privat\/ekonomikollen\/sparande-och-pension/hur-mycket-vill-du-ha-i-pension$
-^.*\/privat\/ekonomikollen\/vardagsekonomi/detta-ska-du-ha-extra-koll-pa-i-deklarationen$</value>
-  </data>
   <metadata name="openFileDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>

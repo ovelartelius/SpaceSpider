@@ -21,5 +21,6 @@ namespace CheckRequestedUrls
 
         public bool RunOverVpn { get; set; }
         public bool IgnoreSearch { get; set; }
+        public bool CheckDomainBeforeStart { get; set; }
     }
 }

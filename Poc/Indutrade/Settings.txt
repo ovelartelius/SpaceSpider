@@ -1,0 +1,11 @@
+CSV file to load:
+C:\dev\SpaceSpider\Poc\Indutrade\indutrade.com Top target pages 2019-11-23.csv
+
+Exception:
+^.*\/powershell\/.*$
+
+New site domain:
+https://indu02aap4u77qprep.dxcloud.episerver.net/
+
+Output directory:
+C:\dev\SpaceSpider\Poc\Indutrade\2019-11-23
