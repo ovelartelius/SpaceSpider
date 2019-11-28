@@ -230,22 +230,19 @@ namespace CheckRequestedUrls
             }
             catch (Exception catchEx)
             {
+                Console.WriteLine(catchEx.Message);
                 result.StatusCode = HttpStatusCode.BadRequest;
                 result.Description = $"Could not request {url}";
                 //Biz.Log.LogWarning($"Could not request {url}: {catchEx.Message}");
             }
 
-            if (webResponse != null)
-            {
-                webResponse.Close();
-            }
+            webResponse?.Close();
 
             return result;
         }
 
         public dynamic GetExternalData(string url, string proxyAddress = "")
         {
-            string result;
             dynamic dynamicResult;
             using (var wc = new WebClient())
             {
@@ -255,31 +252,13 @@ namespace CheckRequestedUrls
                 {
                     var webProxy = new WebProxy(proxyAddress);
                     wc.Proxy = webProxy;
-                    //usedProxy = true;
                 }
 
                 var uri = new Uri(url);
 
-                result = wc.DownloadString(uri);
-                //if (url.Contains("pow"))
-                //{
-                //    result = File.ReadAllText(@"SearchResultEmpty.json");
-                //}
-                //else
-                //{
-                //    result = File.ReadAllText(@"SearchResult.json");
-                //}
+                var result = wc.DownloadString(uri);
 
                 dynamicResult = ConvertToDynamic(result);
-                //if (usedProxy)
-                //{
-                //    Log.LogInfo($"Download content from {uri}. Used proxy {usedProxy} with URL {proxyUrl}");
-                //}
-                //else
-                //{
-                //    Log.LogInfo($"Download content from {uri}. Used no proxy.");
-                //}
-
             }
 
             return dynamicResult;

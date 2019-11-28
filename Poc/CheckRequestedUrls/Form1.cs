@@ -106,7 +106,7 @@ namespace CheckRequestedUrls
                 {
                     var oldUri = new Uri(url);
                     var newUrl = string.Empty;
-                    if (newSiteUri.Port != 80)
+                    if (newSiteUri.Port != 80 && newSiteUri.Port != 443)
                     {
                         newUrl = $"{newSiteUri.Scheme}://{newSiteUri.Host}:{newSiteUri.Port}{oldUri.PathAndQuery}";
                     }
@@ -201,7 +201,7 @@ namespace CheckRequestedUrls
 
         private void SaveToExcel(string dateTimeString, string extraFileName, StringBuilder sb)
         {
-            string filePath = $"{workLoad.OutputDirectory}Result_{dateTimeString}_{extraFileName}.csv";
+            string filePath = $"{workLoad.OutputDirectory}\\Result_{dateTimeString}_{extraFileName}.csv";
 
             if (File.Exists(filePath))
             {
@@ -226,11 +226,20 @@ namespace CheckRequestedUrls
 
             var listOf400Response = workLoad.SpiderPageLinks.Where(x => x.StatusCode == HttpStatusCode.NotFound).OrderBy(x => x.Url).ToList();
 
-            // Av de sidor som svara 404 så har dessa efterfrågats utav någon de senaste x dagarna.
-            var listOf400Missing = listOf400Response.Where(x => x.HistoricHits != 0).OrderBy(x => x.Url).ToList();
+            var listOf400Missing = new List<SpiderPageLink>();
+            var listOf400NotMissing = new List<SpiderPageLink>();
+            if (workLoad.IgnoreSearch)
+            {
+                listOf400Missing = listOf400Response.OrderBy(x => x.Url).ToList();
+            }
+            else
+            {
+                // Av de sidor som svara 404 så har dessa efterfrågats utav någon de senaste x dagarna.
+                listOf400Missing = listOf400Response.Where(x => x.HistoricHits != 0).OrderBy(x => x.Url).ToList();
 
-            // Av de sidor som svara 404 så har dessa INTE efterfrågats utav någon de senaste x dagarna.
-            var listOf400NotMissing = listOf400Response.Where(x => x.HistoricHits == 0).OrderByDescending(x => x.HistoricHits).ToList();
+                // Av de sidor som svara 404 så har dessa INTE efterfrågats utav någon de senaste x dagarna.
+                listOf400NotMissing = listOf400Response.Where(x => x.HistoricHits == 0).OrderByDescending(x => x.HistoricHits).ToList();
+            }
 
             var listOf500Response = workLoad.SpiderPageLinks.Where(x => x.StatusCode == HttpStatusCode.InternalServerError || x.Erroneous).OrderBy(x => x.Url).ToList();
 
@@ -241,6 +250,12 @@ namespace CheckRequestedUrls
             var listOfIgnored = workLoad.SpiderPageLinks.Where(x => x.Ignored).OrderBy(x => x.Url).ToList();
 
             var dateTimeString = DateTime.Now.ToString("yyyy-MM-ddTHHmm");
+
+            workLoad.OutputDirectory = workLoad.OutputDirectory + "\\" + dateTimeString;
+            if (!Directory.Exists(workLoad.OutputDirectory))
+            {
+                Directory.CreateDirectory(workLoad.OutputDirectory);
+            }
 
             var sb = new StringBuilder();
 
@@ -267,27 +282,43 @@ namespace CheckRequestedUrls
             }
             SaveToExcel(dateTimeString, "301", sb301);
 
-            sb.AppendLine("");
-            sb.AppendLine("");
-            sb.AppendLine("Requested missing URLs (404): (URLs are requested in past and may need to be handled)");
-            var sb404Missing = new StringBuilder();
-            foreach (var item in listOf400Missing)
+            if (workLoad.IgnoreSearch)
             {
-                sb.AppendLine(item.Url);
-                sb404Missing.AppendLine(item.Url);
+                sb.AppendLine("");
+                sb.AppendLine("");
+                sb.AppendLine("Requested missing URLs (404):");
+                var sb404Missing = new StringBuilder();
+                foreach (var item in listOf400Missing)
+                {
+                    sb.AppendLine(item.Url);
+                    sb404Missing.AppendLine(item.Url);
+                }
+                SaveToExcel(dateTimeString, "404Missing", sb404Missing);
             }
-            SaveToExcel(dateTimeString, "404Missing", sb404Missing);
+            else
+            {
+                sb.AppendLine("");
+                sb.AppendLine("");
+                sb.AppendLine("Requested missing URLs (404): (URLs are requested in past and may need to be handled)");
+                var sb404Missing = new StringBuilder();
+                foreach (var item in listOf400Missing)
+                {
+                    sb.AppendLine(item.Url);
+                    sb404Missing.AppendLine(item.Url);
+                }
+                SaveToExcel(dateTimeString, "404Missing", sb404Missing);
 
-            sb.AppendLine("");
-            sb.AppendLine("");
-            sb.AppendLine("Not found URLs (404): (URLs can be ignored)");
-            var sb404 = new StringBuilder();
-            foreach (var item in listOf400NotMissing)
-            {
-                sb.AppendLine(item.Url);
-                sb404.AppendLine(item.Url);
+                sb.AppendLine("");
+                sb.AppendLine("");
+                sb.AppendLine("Not found URLs (404): (URLs can be ignored)");
+                var sb404 = new StringBuilder();
+                foreach (var item in listOf400NotMissing)
+                {
+                    sb.AppendLine(item.Url);
+                    sb404.AppendLine(item.Url);
+                }
+                SaveToExcel(dateTimeString, "404", sb404);
             }
-            SaveToExcel(dateTimeString, "404", sb404);
 
             sb.AppendLine("");
             sb.AppendLine("");
@@ -335,10 +366,8 @@ namespace CheckRequestedUrls
             }
             SaveToExcel(dateTimeString, "RawData", sbRawData);
 
-            //TODO: Create text file
-
             //string appPath = Request.PhysicalApplicationPath;
-            string filePath = $"{workLoad.OutputDirectory}Result_{DateTime.Now.ToString("yyyy-MM-ddTHHmm")}.txt";
+            string filePath = $"{workLoad.OutputDirectory}\\Result_{DateTime.Now.ToString("yyyy-MM-ddTHHmm")}.txt";
 
             if (File.Exists(filePath))
             {
