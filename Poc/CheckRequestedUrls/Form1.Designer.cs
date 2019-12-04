@@ -206,6 +206,7 @@
             this.backgroundWorkerUrlCheck.WorkerSupportsCancellation = true;
             this.backgroundWorkerUrlCheck.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorkerUrlCheck_DoWork);
             this.backgroundWorkerUrlCheck.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorkerUrlCheck_RunWorkerCompleted);
+            this.backgroundWorkerUrlCheck.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.backgroundWorkerUrlCheck_ProgressChanged);
             // 
             // backgroundWorkerLoadCsv
             // 

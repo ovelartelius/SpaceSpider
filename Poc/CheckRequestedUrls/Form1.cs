@@ -79,8 +79,10 @@ namespace CheckRequestedUrls
 
             //Log($"Found {values.Count()} URLs in the file {workLoad.CsvFile}");
 
-            //progressBarWork.Maximum = values.Count;
+            //progressBarWork.Maximum = workLoad.Urls.Count;
             //progressBarWork.Value = 0;
+
+            backgroundWorkerUrlCheck.ReportProgress(-1, workLoad.Urls.Count);
 
             var pageLinks = new List<SpiderPageLink>();
             var newSiteUri = new Uri(workLoad.NewSiteDomain);
@@ -179,7 +181,7 @@ namespace CheckRequestedUrls
                     pageLinks.Add(spiderPageLink);
                 }
                 //progressBarWork.PerformStep();
-                //backgroundWorkerUrlCheck.ReportProgress(i);
+                backgroundWorkerUrlCheck.ReportProgress(i);
                 i++;
             }
 
@@ -189,15 +191,20 @@ namespace CheckRequestedUrls
             e.Result = pageLinks;
         }
 
-        //private void backgroundWorkerUrlCheck_ProgressChanged(object sender, ProgressChangedEventArgs e)
-        //{
-        //    // Change the value of the ProgressBar to the BackgroundWorker progress.
-        //    //progressBarWork.Value = e.ProgressPercentage;
-        //    progressBarWork.PerformStep();
+        private void backgroundWorkerUrlCheck_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            // Change the value of the ProgressBar to the BackgroundWorker progress.
+            //progressBarWork.Value = e.ProgressPercentage;
+            //progressBarWork.PerformStep();
 
-        //    // Set the text.
-        //    //this.Text = e.ProgressPercentage.ToString();
-        //}
+            if (e.ProgressPercentage == -1)
+                progressBarWork.Maximum = Convert.ToInt32(e.UserState);
+            else
+                progressBarWork.Value = e.ProgressPercentage;
+
+            // Set the text.
+            //this.Text = e.ProgressPercentage.ToString();
+        }
 
         private void SaveToExcel(string dateTimeString, string extraFileName, StringBuilder sb)
         {
