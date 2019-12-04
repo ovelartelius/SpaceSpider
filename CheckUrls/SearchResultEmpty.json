@@ -1,0 +1,14 @@
+﻿{
+  "stats": {
+    "totalHits": 0,
+    "searchEngineTimeInMillis": 119,
+    "searchEngineRoundTripTimeInMillis": 121,
+    "searchProcessingTimeInMillis": 122
+  },
+  "query": null,
+  "documentList": [],
+  "facets": [],
+  "spell": null,
+  "quicklinks": null,
+  "errorMessages": []
+}
