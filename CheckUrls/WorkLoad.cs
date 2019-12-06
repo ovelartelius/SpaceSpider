@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Spider.Models;
 
 namespace CheckRequestedUrls
 {
@@ -14,7 +15,6 @@ namespace CheckRequestedUrls
         public string Proxy { get; set; }
         public string SearchUrl { get; set; }
         public string OutputDirectory { get; set; }
-        //public List<CsvSimpleUrl> Urls { get; set; }
         public List<string> Urls { get; set; }
         public List<SpiderPageLink> SpiderPageLinks { get; set; }
         public List<string> IgnorePatterns { get; set; }

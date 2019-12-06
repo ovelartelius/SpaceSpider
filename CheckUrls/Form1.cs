@@ -10,6 +10,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using CheckRequestedUrls.Models;
+using Spider.Models;
 
 namespace CheckRequestedUrls
 {
@@ -50,7 +52,7 @@ namespace CheckRequestedUrls
                 workLoad.IgnorePatterns.Add(patternValue);
             }
 
-            var spider = new Spider();
+            var spider = new Spider.Spider();
             var newSiteUri = new Uri(workLoad.NewSiteDomain);
 
             if (workLoad.CheckDomainBeforeStart)
@@ -74,7 +76,7 @@ namespace CheckRequestedUrls
         {
             var workLoad = e.Argument as WorkLoad;
             
-            var spider = new Spider();
+            var spider = new Spider.Spider();
             //LogReset();
 
             //Log($"Found {values.Count()} URLs in the file {workLoad.CsvFile}");
@@ -475,5 +477,38 @@ namespace CheckRequestedUrls
         {
             textBoxLog.Text = message + "\r\n" + textBoxLog.Text;
         }
+
+        private void loadSettingsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            openSettingsDialog.InitialDirectory = @"c:\temp\SpaceSpider\CheckUrls";
+            openSettingsDialog.ShowDialog();
+        }
+
+        private void saveSettingsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            saveSettingsDialog.InitialDirectory = @"c:\temp\SpaceSpider\CheckUrls";
+
+            saveSettingsDialog.ShowDialog();
+        }
+
+        private void openSettingsDialog_FileOk(object sender, CancelEventArgs e)
+        {
+            Console.WriteLine(openSettingsDialog.FileName);
+
+            var settings = Spider.Settings.LoadSettings<CheckUrlsSettings>(openSettingsDialog.FileName);
+            textBoxCsvFile.Text = settings.CsvFilePath;
+            textBoxIgnorePatterns.Text = settings.IgnorePatterns;
+        }
+
+        private void saveSettingsDialog_FileOk(object sender, CancelEventArgs e)
+        {
+            var settings = new CheckUrlsSettings();
+            settings.CsvFilePath = textBoxCsvFile.Text;
+            settings.IgnorePatterns = textBoxIgnorePatterns.Text;
+
+            Spider.Settings.SaveSettings(saveSettingsDialog.FileName, settings);
+
+        }
+
     }
 }
