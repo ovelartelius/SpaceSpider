@@ -24,52 +24,89 @@ namespace CheckRequestedUrls
 
         private void buttonStartWork_Click(object sender, EventArgs e)
         {
-            workLoad = new WorkLoad {
-                CsvFile = textBoxCsvFile.Text,
-                NewSiteDomain = textBoxNewSiteDomain.Text,
-                UserAgent = textBoxUserAgent.Text,
-                Proxy = textBoxProxy.Text,
-                IgnorePatterns = new List<string>(),
-                SearchUrl = textBoxSearchUrl.Text,
-                OutputDirectory = textBoxOutputDirectory.Text,
-                RunOverVpn = checkBoxOverVpn.Checked,
-                IgnoreSearch = checkBoxIgnoreSearch.Checked,
-                CheckDomainBeforeStart = checkBoxCheckDomainBeforeStart.Checked
-            };
+			_workLoad = PopulateWorkLoad();
 
-            var patterns = textBoxIgnorePatterns.Text.Split('\n');
-            foreach (var pattern in patterns)
-            {
-                var patternValue = pattern;
-                if (patternValue.Contains("\r"))
-                {
-                    patternValue = patternValue.Replace("\r", "");
-                }
-                //if (patternValue.Contains("\\/"))
-                //{
-                //    patternValue = patternValue.Replace(@"\\/", @"\/");
-                //}
-                workLoad.IgnorePatterns.Add(patternValue);
-            }
+            //var spider = new Spider.Spider();
+            //var newSiteUri = new Uri(_workLoad.NewSiteDomain);
 
-            var spider = new Spider.Spider();
-            var newSiteUri = new Uri(workLoad.NewSiteDomain);
+            //if (_workLoad.CheckDomainBeforeStart)
+            //{
+            //    // First we check that the new site domain is working.
+            //    var newSitePageLink = spider.CheckUrl(newSiteUri.AbsoluteUri, new List<string>(), _workLoad.UserAgent);
 
-            if (workLoad.CheckDomainBeforeStart)
-            {
-                // First we check that the new site domain is working.
-                var newSitePageLink = spider.CheckUrl(newSiteUri.AbsoluteUri, new List<string>(), workLoad.UserAgent);
+            //    if (newSitePageLink.StatusCode != System.Net.HttpStatusCode.OK)
+            //    {
+            //        Log($"Can not start the job. New site domain is not working: {_workLoad.NewSiteDomain} - StatusCode:{newSitePageLink.StatusCode}, expected {System.Net.HttpStatusCode.OK}");
+            //        return;
+            //    }
+            //}
+			if (!ValidateNewSiteDomain(_workLoad))
+			{
+				Log($"Can not start the job. New site domain {_workLoad.NewSiteDomain} is not working.");
+				return;
+			}
 
-                if (newSitePageLink.StatusCode != System.Net.HttpStatusCode.OK)
-                {
-                    Log($"Can not start the job. New site domain is not working: {workLoad.NewSiteDomain} - StatusCode:{newSitePageLink.StatusCode}, expected {System.Net.HttpStatusCode.OK}");
-                    return;
-                }
-            }
-
-            backgroundWorkerLoadCsv.RunWorkerAsync(workLoad);
+            backgroundWorkerLoadCsv.RunWorkerAsync(_workLoad);
 
         }
+
+		private bool ValidateNewSiteDomain(WorkLoad workLoad)
+		{
+			var valid = false;
+			var spider = new Spider.Spider();
+			var newSiteUri = new Uri(_workLoad.NewSiteDomain);
+
+			if (_workLoad.CheckDomainBeforeStart)
+			{
+				// First we check that the new site domain is working.
+				var newSitePageLink = spider.CheckUrl(newSiteUri.AbsoluteUri, new List<string>(), _workLoad.UserAgent);
+
+				if (newSitePageLink.StatusCode == System.Net.HttpStatusCode.OK)
+				{
+					valid = true;
+				}
+				else
+				{
+					Log($"Validate New site domain: {_workLoad.NewSiteDomain} - StatusCode:{newSitePageLink.StatusCode}, expected {System.Net.HttpStatusCode.OK}");
+				}
+			}
+			else
+			{
+				valid = true;
+			}
+
+			return valid;
+		}
+
+		private WorkLoad PopulateWorkLoad()
+		{
+			var workLoad = new WorkLoad
+			{
+				CsvFile = textBoxCsvFile.Text,
+				NewSiteDomain = textBoxNewSiteDomain.Text,
+				UserAgent = textBoxUserAgent.Text,
+				Proxy = textBoxProxy.Text,
+				IgnorePatterns = new List<string>(),
+				SearchUrl = textBoxSearchUrl.Text,
+				OutputDirectory = textBoxOutputDirectory.Text,
+				RunOverVpn = checkBoxOverVpn.Checked,
+				IgnoreSearch = checkBoxIgnoreSearch.Checked,
+				CheckDomainBeforeStart = checkBoxCheckDomainBeforeStart.Checked
+			};
+
+			var patterns = textBoxIgnorePatterns.Text.Split('\n');
+			foreach (var pattern in patterns)
+			{
+				var patternValue = pattern;
+				if (patternValue.Contains("\r"))
+				{
+					patternValue = patternValue.Replace("\r", "");
+				}
+				workLoad.IgnorePatterns.Add(patternValue);
+			}
+
+			return workLoad;
+		}
 
         #region BackgroundWorkerUrlCheck
         private void backgroundWorkerUrlCheck_DoWork(object sender, DoWorkEventArgs e)
@@ -210,7 +247,7 @@ namespace CheckRequestedUrls
 
         private void SaveToExcel(string dateTimeString, string extraFileName, StringBuilder sb)
         {
-            string filePath = $"{workLoad.OutputDirectory}\\Result_{dateTimeString}_{extraFileName}.csv";
+            string filePath = $"{_workLoad.OutputDirectory}\\Result_{dateTimeString}_{extraFileName}.csv";
 
             if (File.Exists(filePath))
             {
@@ -229,15 +266,15 @@ namespace CheckRequestedUrls
             //
             // Receive the result from DoWork, and display it.
             //
-            workLoad.SpiderPageLinks = e.Result as List<SpiderPageLink>;
+            _workLoad.SpiderPageLinks = e.Result as List<SpiderPageLink>;
 
-            var listOf200Response = workLoad.SpiderPageLinks.Where(x => x.StatusCode == HttpStatusCode.OK).OrderBy(x => x.Url).ToList();
+            var listOf200Response = _workLoad.SpiderPageLinks.Where(x => x.StatusCode == HttpStatusCode.OK).OrderBy(x => x.Url).ToList();
 
-            var listOf400Response = workLoad.SpiderPageLinks.Where(x => x.StatusCode == HttpStatusCode.NotFound).OrderBy(x => x.Url).ToList();
+            var listOf400Response = _workLoad.SpiderPageLinks.Where(x => x.StatusCode == HttpStatusCode.NotFound).OrderBy(x => x.Url).ToList();
 
             var listOf400Missing = new List<SpiderPageLink>();
             var listOf400NotMissing = new List<SpiderPageLink>();
-            if (workLoad.IgnoreSearch)
+            if (_workLoad.IgnoreSearch)
             {
                 listOf400Missing = listOf400Response.OrderBy(x => x.Url).ToList();
             }
@@ -250,25 +287,25 @@ namespace CheckRequestedUrls
                 listOf400NotMissing = listOf400Response.Where(x => x.HistoricHits == 0).OrderByDescending(x => x.HistoricHits).ToList();
             }
 
-            var listOf500Response = workLoad.SpiderPageLinks.Where(x => x.StatusCode == HttpStatusCode.InternalServerError || x.Erroneous).OrderBy(x => x.Url).ToList();
+            var listOf500Response = _workLoad.SpiderPageLinks.Where(x => x.StatusCode == HttpStatusCode.InternalServerError || x.Erroneous).OrderBy(x => x.Url).ToList();
 
-            var listOf301Response = workLoad.SpiderPageLinks.Where(x => (x.StatusCode == HttpStatusCode.MovedPermanently || x.StatusCode == HttpStatusCode.Found) && !x.Erroneous).OrderBy(x => x.Url).ToList();
+            var listOf301Response = _workLoad.SpiderPageLinks.Where(x => (x.StatusCode == HttpStatusCode.MovedPermanently || x.StatusCode == HttpStatusCode.Found) && !x.Erroneous).OrderBy(x => x.Url).ToList();
 
-            var listOfOthers = workLoad.SpiderPageLinks.Where(x => x.StatusCode != HttpStatusCode.MovedPermanently && x.StatusCode != HttpStatusCode.Found && x.StatusCode != HttpStatusCode.InternalServerError && x.StatusCode != HttpStatusCode.NotFound && x.StatusCode != HttpStatusCode.OK).OrderBy(x => x.Url).ToList();
+            var listOfOthers = _workLoad.SpiderPageLinks.Where(x => x.StatusCode != HttpStatusCode.MovedPermanently && x.StatusCode != HttpStatusCode.Found && x.StatusCode != HttpStatusCode.InternalServerError && x.StatusCode != HttpStatusCode.NotFound && x.StatusCode != HttpStatusCode.OK).OrderBy(x => x.Url).ToList();
 
-            var listOfIgnored = workLoad.SpiderPageLinks.Where(x => x.Ignored).OrderBy(x => x.Url).ToList();
+            var listOfIgnored = _workLoad.SpiderPageLinks.Where(x => x.Ignored).OrderBy(x => x.Url).ToList();
 
             var dateTimeString = DateTime.Now.ToString("yyyy-MM-ddTHHmm");
 
-            workLoad.OutputDirectory = workLoad.OutputDirectory + "\\" + dateTimeString;
-            if (!Directory.Exists(workLoad.OutputDirectory))
+            _workLoad.OutputDirectory = _workLoad.OutputDirectory + "\\" + dateTimeString;
+            if (!Directory.Exists(_workLoad.OutputDirectory))
             {
-                Directory.CreateDirectory(workLoad.OutputDirectory);
+                Directory.CreateDirectory(_workLoad.OutputDirectory);
             }
 
             var sb = new StringBuilder();
 
-            sb.AppendLine($"CSV file - {workLoad.CsvFile} {DateTime.Now.ToString("yyyy-MM-dd HH:mm")}");
+            sb.AppendLine($"CSV file - {_workLoad.CsvFile} {DateTime.Now.ToString("yyyy-MM-dd HH:mm")}");
             sb.AppendLine("");
             sb.AppendLine("");
             sb.AppendLine("Working URLs (200):");
@@ -291,7 +328,7 @@ namespace CheckRequestedUrls
             }
             SaveToExcel(dateTimeString, "301", sb301);
 
-            if (workLoad.IgnoreSearch)
+            if (_workLoad.IgnoreSearch)
             {
                 sb.AppendLine("");
                 sb.AppendLine("");
@@ -368,7 +405,7 @@ namespace CheckRequestedUrls
             sb.AppendLine($"Url,StatusCode,Description,HistoricHits,Erroneous");
             var sbRawData = new StringBuilder();
             sbRawData.AppendLine($"Url;StatusCode;Description;HistoricHits;Erroneous");
-            foreach (var item in workLoad.SpiderPageLinks)
+            foreach (var item in _workLoad.SpiderPageLinks)
             {
                 sb.AppendLine($"{item.Url},{item.StatusCode},{item.Description},{item.HistoricHits},{item.Erroneous}");
                 sbRawData.AppendLine($"{item.Url};{item.StatusCode};{item.Description};{item.HistoricHits};{item.Erroneous}");
@@ -376,7 +413,7 @@ namespace CheckRequestedUrls
             SaveToExcel(dateTimeString, "RawData", sbRawData);
 
             //string appPath = Request.PhysicalApplicationPath;
-            string filePath = $"{workLoad.OutputDirectory}\\Result_{DateTime.Now.ToString("yyyy-MM-ddTHHmm")}.txt";
+            string filePath = $"{_workLoad.OutputDirectory}\\Result_{DateTime.Now.ToString("yyyy-MM-ddTHHmm")}.txt";
 
             if (File.Exists(filePath))
             {
@@ -431,30 +468,30 @@ namespace CheckRequestedUrls
             //
             // Receive the result from DoWork, and display it.
             //
-            workLoad.Urls = e.Result as List<string>;
+            _workLoad.Urls = e.Result as List<string>;
 
             //this.Text = test.OneValue.ToString() + " " + test.TwoValue.ToString();
 
             // Remove all emty
-            workLoad.Urls = workLoad.Urls.Where(x => !string.IsNullOrEmpty(x)).ToList();
+            _workLoad.Urls = _workLoad.Urls.Where(x => !string.IsNullOrEmpty(x)).ToList();
             // Make them unique
-            workLoad.Urls = workLoad.Urls.Distinct().ToList();
+            _workLoad.Urls = _workLoad.Urls.Distinct().ToList();
             //
             // Will display "6 3" in title Text (in this example)
             //
-            Log($"Found {workLoad.Urls.Count().ToString()} URLs in the CSV file.");
+            Log($"Found {_workLoad.Urls.Count().ToString()} URLs in the CSV file.");
 
             StartUrlCheck();
         }
 
         private void StartUrlCheck()
         {
-            if (workLoad.Urls.Count() != 0 && !backgroundWorkerUrlCheck.IsBusy)
+            if (_workLoad.Urls.Count() != 0 && !backgroundWorkerUrlCheck.IsBusy)
             {
-                progressBarWork.Maximum = workLoad.Urls.Count;
+                progressBarWork.Maximum = _workLoad.Urls.Count;
                 progressBarWork.Value = 0;
 
-                backgroundWorkerUrlCheck.RunWorkerAsync(workLoad);
+                backgroundWorkerUrlCheck.RunWorkerAsync(_workLoad);
             }
             else
             {
@@ -466,7 +503,7 @@ namespace CheckRequestedUrls
 
         //protected List<CsvSimpleUrl> urlList = new List<CsvSimpleUrl>();
         //protected List<SpiderPageLink> pageLinks = new List<SpiderPageLink>();
-        protected WorkLoad workLoad = new WorkLoad();
+        protected WorkLoad _workLoad = new WorkLoad();
 
         private void LogReset()
         {
@@ -480,15 +517,16 @@ namespace CheckRequestedUrls
 
         private void loadSettingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            openSettingsDialog.InitialDirectory = @"c:\temp\SpaceSpider\CheckUrls";
-            openSettingsDialog.ShowDialog();
+			//string fileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "userinfo.txt");
+			openSettingsDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData); //@"c:\temp\SpaceSpider\CheckUrls";
+			openSettingsDialog.ShowDialog();
         }
 
         private void saveSettingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            saveSettingsDialog.InitialDirectory = @"c:\temp\SpaceSpider\CheckUrls";
+			saveSettingsDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData); //@"c:\temp\SpaceSpider\CheckUrls";
 
-            saveSettingsDialog.ShowDialog();
+			saveSettingsDialog.ShowDialog();
         }
 
         private void openSettingsDialog_FileOk(object sender, CancelEventArgs e)
@@ -496,19 +534,44 @@ namespace CheckRequestedUrls
             Console.WriteLine(openSettingsDialog.FileName);
 
             var settings = Spider.Settings.LoadSettings<CheckUrlsSettings>(openSettingsDialog.FileName);
-            textBoxCsvFile.Text = settings.CsvFilePath;
-            textBoxIgnorePatterns.Text = settings.IgnorePatterns;
-        }
+			PopulateFormWithSettingsValues(settings);
+		}
 
         private void saveSettingsDialog_FileOk(object sender, CancelEventArgs e)
         {
             var settings = new CheckUrlsSettings();
-            settings.CsvFilePath = textBoxCsvFile.Text;
-            settings.IgnorePatterns = textBoxIgnorePatterns.Text;
+			PopulateSettingsWithFormValues(settings);
 
-            Spider.Settings.SaveSettings(saveSettingsDialog.FileName, settings);
+			Spider.Settings.SaveSettings(saveSettingsDialog.FileName, settings);
 
         }
 
-    }
+		private void PopulateFormWithSettingsValues(CheckUrlsSettings settings)
+		{
+			textBoxCsvFile.Text = settings.CsvFilePath;
+			textBoxIgnorePatterns.Text = settings.IgnorePatterns;
+			textBoxSearchUrl.Text = settings.SearchUrl;
+			checkBoxOverVpn.Checked = settings.RunningOverVpn;
+			checkBoxIgnoreSearch.Checked = settings.IgnoreSearch;
+			checkBoxCheckDomainBeforeStart.Checked = settings.CheckSiteDomainBeforeStart;
+			textBoxNewSiteDomain.Text = settings.NewSiteDomain;
+			textBoxProxy.Text = settings.Proxy;
+			textBoxUserAgent.Text = settings.UserAgent;
+			textBoxOutputDirectory.Text = settings.OutputDirectory;
+		}
+
+		private void PopulateSettingsWithFormValues(CheckUrlsSettings settings)
+		{
+			settings.CsvFilePath = textBoxCsvFile.Text;
+			settings.IgnorePatterns = textBoxIgnorePatterns.Text;
+			settings.SearchUrl = textBoxSearchUrl.Text;
+			settings.RunningOverVpn = checkBoxOverVpn.Checked;
+			settings.IgnoreSearch = checkBoxIgnoreSearch.Checked;
+			settings.CheckSiteDomainBeforeStart = checkBoxCheckDomainBeforeStart.Checked;
+			settings.NewSiteDomain = textBoxNewSiteDomain.Text;
+			settings.Proxy = textBoxProxy.Text;
+			settings.UserAgent = textBoxUserAgent.Text;
+			settings.OutputDirectory = textBoxOutputDirectory.Text;
+		}
+	}
 }

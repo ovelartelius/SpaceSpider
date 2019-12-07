@@ -7,7 +7,8 @@ namespace CheckRequestedUrls.Models
         public string SettingsType => this.ToString();
         public string CsvFilePath { get; set; }
         public string IgnorePatterns { get; set; }
-        public bool RunningOverVpn { get; set; }
+		public string SearchUrl { get; set; }
+		public bool RunningOverVpn { get; set; }
         public bool IgnoreSearch { get; set; }
         public bool CheckSiteDomainBeforeStart { get; set; }
         public string NewSiteDomain { get; set; }
