@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using CheckRequestedUrls.Models;
 using Spider.Models;
@@ -17,29 +16,25 @@ namespace CheckRequestedUrls
 {
     public partial class Form1 : Form
     {
-        public Form1()
+		private string _lastVisitedSettingsFolder;
+		private string _lastVisitedDataFolder;
+
+		public Form1()
         {
             InitializeComponent();
-        }
+
+			_lastVisitedSettingsFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+			_lastVisitedDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+
+		}
 
         private void buttonStartWork_Click(object sender, EventArgs e)
         {
+			linkLabelResultFolder.Text = string.Empty;
+			textBoxLog.Text = string.Empty;
+			buttonStartWork.Enabled = false;
 			_workLoad = PopulateWorkLoad();
 
-            //var spider = new Spider.Spider();
-            //var newSiteUri = new Uri(_workLoad.NewSiteDomain);
-
-            //if (_workLoad.CheckDomainBeforeStart)
-            //{
-            //    // First we check that the new site domain is working.
-            //    var newSitePageLink = spider.CheckUrl(newSiteUri.AbsoluteUri, new List<string>(), _workLoad.UserAgent);
-
-            //    if (newSitePageLink.StatusCode != System.Net.HttpStatusCode.OK)
-            //    {
-            //        Log($"Can not start the job. New site domain is not working: {_workLoad.NewSiteDomain} - StatusCode:{newSitePageLink.StatusCode}, expected {System.Net.HttpStatusCode.OK}");
-            //        return;
-            //    }
-            //}
 			if (!ValidateNewSiteDomain(_workLoad))
 			{
 				Log($"Can not start the job. New site domain {_workLoad.NewSiteDomain} is not working.");
@@ -305,7 +300,7 @@ namespace CheckRequestedUrls
 
             var sb = new StringBuilder();
 
-            sb.AppendLine($"CSV file - {_workLoad.CsvFile} {DateTime.Now.ToString("yyyy-MM-dd HH:mm")}");
+            sb.AppendLine($"CSV file - {_workLoad.CsvFile} {dateTimeString}");
             sb.AppendLine("");
             sb.AppendLine("");
             sb.AppendLine("Working URLs (200):");
@@ -315,7 +310,11 @@ namespace CheckRequestedUrls
                 sb.AppendLine(item.Url);
                 sb200.AppendLine(item.Url);
             }
-            SaveToExcel(dateTimeString, "200", sb200);
+			if (listOf200Response.Any())
+			{
+				Log($"Found {listOf200Response.Count} 200 URLs.");
+			}
+			SaveToExcel(dateTimeString, "200", sb200);
 
             sb.AppendLine("");
             sb.AppendLine("");
@@ -326,7 +325,11 @@ namespace CheckRequestedUrls
                 sb.AppendLine(item.Url + " => " + item.Description);
                 sb301.AppendLine(item.Url);
             }
-            SaveToExcel(dateTimeString, "301", sb301);
+			if (listOf301Response.Any())
+			{
+				Log($"Found {listOf301Response.Count} 301 URLs.");
+			}
+			SaveToExcel(dateTimeString, "301", sb301);
 
             if (_workLoad.IgnoreSearch)
             {
@@ -339,7 +342,11 @@ namespace CheckRequestedUrls
                     sb.AppendLine(item.Url);
                     sb404Missing.AppendLine(item.Url);
                 }
-                SaveToExcel(dateTimeString, "404Missing", sb404Missing);
+				if (listOf400Missing.Any())
+				{
+					Log($"Found {listOf400Missing.Count} 404 URLs.");
+				}
+				SaveToExcel(dateTimeString, "404Missing", sb404Missing);
             }
             else
             {
@@ -352,7 +359,11 @@ namespace CheckRequestedUrls
                     sb.AppendLine(item.Url);
                     sb404Missing.AppendLine(item.Url);
                 }
-                SaveToExcel(dateTimeString, "404Missing", sb404Missing);
+				if (listOf400Missing.Any())
+				{
+					Log($"Found {listOf400Missing.Count} 404 URLs.");
+				}
+				SaveToExcel(dateTimeString, "404Missing", sb404Missing);
 
                 sb.AppendLine("");
                 sb.AppendLine("");
@@ -363,7 +374,11 @@ namespace CheckRequestedUrls
                     sb.AppendLine(item.Url);
                     sb404.AppendLine(item.Url);
                 }
-                SaveToExcel(dateTimeString, "404", sb404);
+				if (listOf400NotMissing.Any())
+				{
+					Log($"Found {listOf400NotMissing.Count} 404 URLs that can be ignored.");
+				}
+				SaveToExcel(dateTimeString, "404", sb404);
             }
 
             sb.AppendLine("");
@@ -375,7 +390,11 @@ namespace CheckRequestedUrls
                 sb.AppendLine(item.Url + " => " + item.Description);
                 sb500.AppendLine(item.Url);
             }
-            SaveToExcel(dateTimeString, "500", sb500);
+			if (listOf500Response.Any())
+			{
+				Log($"Found {listOf500Response.Count} 500 URLs.");
+			}
+			SaveToExcel(dateTimeString, "500", sb500);
 
             sb.AppendLine("");
             sb.AppendLine("");
@@ -386,7 +405,11 @@ namespace CheckRequestedUrls
                 sb.AppendLine(item.Url);
                 sbIgnored.AppendLine(item.Url);
             }
-            SaveToExcel(dateTimeString, "Ignored", sbIgnored);
+			if (listOfIgnored.Any())
+			{
+				Log($"Found {listOfIgnored.Count} Ignored URLs.");
+			}
+			SaveToExcel(dateTimeString, "Ignored", sbIgnored);
 
             sb.AppendLine("");
             sb.AppendLine("");
@@ -397,6 +420,10 @@ namespace CheckRequestedUrls
                 sb.AppendLine(item.Url);
                 sbOthers.AppendLine(item.Url);
             }
+			if (listOfOthers.Any())
+			{
+				Log($"Found {listOfOthers.Count} 'Others' URLs.");
+			}
             SaveToExcel(dateTimeString, "Others", sbOthers);
 
             sb.AppendLine("");
@@ -410,30 +437,33 @@ namespace CheckRequestedUrls
                 sb.AppendLine($"{item.Url},{item.StatusCode},{item.Description},{item.HistoricHits},{item.Erroneous}");
                 sbRawData.AppendLine($"{item.Url};{item.StatusCode};{item.Description};{item.HistoricHits};{item.Erroneous}");
             }
-            SaveToExcel(dateTimeString, "RawData", sbRawData);
+			SaveToExcel(dateTimeString, "RawData", sbRawData);
 
-            //string appPath = Request.PhysicalApplicationPath;
-            string filePath = $"{_workLoad.OutputDirectory}\\Result_{DateTime.Now.ToString("yyyy-MM-ddTHHmm")}.txt";
+			CreateResultFile(sb, dateTimeString);
 
-            if (File.Exists(filePath))
-            {
-                File.Delete(filePath);
-            }
+			linkLabelResultFolder.Text = _workLoad.OutputDirectory;
+			Log("The end!");
+			buttonStartWork.Enabled = true;
+			progressBarWork.Value = 0;
+		}
 
-            //this code section write stringbuilder content to physical text file.
-            using (StreamWriter swriter = File.CreateText(filePath))
-            {
-                swriter.Write(sb.ToString());
-            }
+		private void CreateResultFile(StringBuilder sb, string dateTime)
+		{
+			string filePath = $"{_workLoad.OutputDirectory}\\Result_{dateTime}.txt";
 
+			if (File.Exists(filePath))
+			{
+				File.Delete(filePath);
+				Log($"Deleted old file {filePath}");
+			}
 
-            //System.IO.File.WriteAllText(@"C:\ws\CheckRequestUrls\MyNewTextFile.txt", sb.ToString());
-
-            //
-            // Will display "6 3" in title Text (in this example)
-            //
-            MessageBox.Show("Finished!");
-        }
+			//this code section write stringbuilder content to physical text file.
+			using (StreamWriter swriter = File.CreateText(filePath))
+			{
+				swriter.Write(sb.ToString());
+			}
+			Log($"Created result file {filePath}");
+		}
         #endregion
 
         #region BackgroundWorkerLoadCsv
@@ -501,8 +531,6 @@ namespace CheckRequestedUrls
 
         #endregion
 
-        //protected List<CsvSimpleUrl> urlList = new List<CsvSimpleUrl>();
-        //protected List<SpiderPageLink> pageLinks = new List<SpiderPageLink>();
         protected WorkLoad _workLoad = new WorkLoad();
 
         private void LogReset()
@@ -517,24 +545,25 @@ namespace CheckRequestedUrls
 
         private void loadSettingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-			//string fileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "userinfo.txt");
-			openSettingsDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData); //@"c:\temp\SpaceSpider\CheckUrls";
+			openSettingsDialog.InitialDirectory = Spider.Settings.LoadRegistrySetting("CheckUrl.SettingsFolder");
 			openSettingsDialog.ShowDialog();
         }
 
         private void saveSettingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-			saveSettingsDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData); //@"c:\temp\SpaceSpider\CheckUrls";
-
+			saveSettingsDialog.InitialDirectory = Spider.Settings.LoadRegistrySetting("CheckUrl.SettingsFolder");
 			saveSettingsDialog.ShowDialog();
         }
 
         private void openSettingsDialog_FileOk(object sender, CancelEventArgs e)
         {
-            Console.WriteLine(openSettingsDialog.FileName);
+			Console.WriteLine(openSettingsDialog.FileName);
 
             var settings = Spider.Settings.LoadSettings<CheckUrlsSettings>(openSettingsDialog.FileName);
 			PopulateFormWithSettingsValues(settings);
+
+			var folder = new FileInfo(openSettingsDialog.FileName).Directory.FullName;
+			Spider.Settings.SaveRegistrySetting("CheckUrl.SettingsFolder", folder);
 		}
 
         private void saveSettingsDialog_FileOk(object sender, CancelEventArgs e)
@@ -544,7 +573,9 @@ namespace CheckRequestedUrls
 
 			Spider.Settings.SaveSettings(saveSettingsDialog.FileName, settings);
 
-        }
+			var folder = new FileInfo(saveSettingsDialog.FileName).Directory.FullName;
+			Spider.Settings.SaveRegistrySetting("CheckUrl.SettingsFolder", folder);
+		}
 
 		private void PopulateFormWithSettingsValues(CheckUrlsSettings settings)
 		{
@@ -572,6 +603,40 @@ namespace CheckRequestedUrls
 			settings.Proxy = textBoxProxy.Text;
 			settings.UserAgent = textBoxUserAgent.Text;
 			settings.OutputDirectory = textBoxOutputDirectory.Text;
+		}
+
+		private void buttonLoadCsv_Click(object sender, EventArgs e)
+		{
+			openCsvDialog.InitialDirectory = Spider.Settings.LoadRegistrySetting("CheckUrl.DataFolder");
+			openCsvDialog.ShowDialog();
+		}
+
+		private void openCsvDialog_FileOk(object sender, CancelEventArgs e)
+		{
+			Console.WriteLine(openCsvDialog.FileName);
+
+			textBoxCsvFile.Text = openCsvDialog.FileName;
+
+			var folder = new FileInfo(openCsvDialog.FileName).Directory.FullName;
+			Spider.Settings.SaveRegistrySetting("CheckUrl.DataFolder", folder);
+		}
+
+		private void buttonOutputDirectory_Click(object sender, EventArgs e)
+		{
+			folderOutputDialog.SelectedPath = Spider.Settings.LoadRegistrySetting("CheckUrl.OutputFolder");
+			folderOutputDialog.ShowDialog();
+		}
+
+		private void folderOutputDialog_HelpRequest(object sender, EventArgs e)
+		{
+			textBoxOutputDirectory.Text = folderOutputDialog.SelectedPath;
+			Spider.Settings.SaveRegistrySetting("CheckUrl.OutputFolder", folderOutputDialog.SelectedPath);
+		}
+
+		private void groupBox1_Enter(object sender, EventArgs e)
+		{
+			var folderName = linkLabelResultFolder.Text;
+			Process.Start(folderName);
 		}
 	}
 }

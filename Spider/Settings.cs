@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Microsoft.Win32;
 using Newtonsoft.Json;
 using Spider.Models;
 
@@ -42,5 +43,35 @@ namespace Spider
 
             return result;
         }
-    }
+
+		public static void SaveRegistrySetting(string key, string value)
+		{
+			var regkey = Registry.CurrentUser.OpenSubKey("SpaceSpider", true);
+			if (regkey == null)
+			{
+				regkey = Registry.CurrentUser.CreateSubKey("SpaceSpider");
+			}
+
+			if (regkey != null)
+			{
+				regkey.SetValue(key.ToString(), value);
+				regkey.Close();
+			}
+		}
+
+		public static string LoadRegistrySetting(string key)
+		{
+			var result = string.Empty;
+			var regkey = Registry.CurrentUser.OpenSubKey("SpaceSpider");
+			try
+			{
+				result = regkey.GetValue(key.ToString()).ToString();
+			}
+			catch
+			{
+				result = string.Empty;
+			}
+			return result;
+		}
+	}
 }
