@@ -283,6 +283,8 @@
 			// 
 			// saveSettingsDialog
 			// 
+			this.saveSettingsDialog.FileName = "*.json";
+			this.saveSettingsDialog.Filter = "json files (*.json)|*.json";
 			this.saveSettingsDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.saveSettingsDialog_FileOk);
 			// 
 			// menuStrip1

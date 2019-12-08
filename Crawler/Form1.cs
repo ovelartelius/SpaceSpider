@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.IO;
 using System.Windows.Forms;
 using Crawler.Models;
 
@@ -17,38 +18,46 @@ namespace Crawler
             Console.WriteLine(openSettingsDialog.FileName);
 
             var settings = Spider.Settings.LoadSettings<CrawlerSettings>(openSettingsDialog.FileName);
-            textBoxUrl.Text = settings.Url;
+			PopulateFormWithSettingsValues(settings);
 
-        }
+			var folder = new FileInfo(openSettingsDialog.FileName).Directory.FullName;
+			Spider.Settings.SaveRegistrySetting("Crawler.SettingsFolder", folder);
 
-        private void buttonLoadSettings_Click(object sender, EventArgs e)
-        {
-            openSettingsDialog.InitialDirectory = @"c:\temp\SpaceSpider\Crawler";
-            openSettingsDialog.ShowDialog();
-        }
-
-        private void buttonSaveSettings_Click(object sender, EventArgs e)
-        {
-            saveSettingsDialog.InitialDirectory = @"c:\temp\SpaceSpider\Crawler";
-
-            saveSettingsDialog.ShowDialog();
-
-            
-
-        }
+		}
 
         private void saveSettingsDialog_FileOk(object sender, CancelEventArgs e)
         {
             var settings = new CrawlerSettings();
-            settings.Url = textBoxUrl.Text;
+			PopulateSettingsWithFormValues(settings);
 
-            Spider.Settings.SaveSettings(saveSettingsDialog.FileName, settings);
-            //using (StreamWriter file = File.CreateText(saveSettingsDialog.FileName))
-            //{
-            //    JsonSerializer serializer = new JsonSerializer();
-            //    //serialize object directly into file stream
-            //    serializer.Serialize(file, settings);
-            //}
-        }
-    }
+			Spider.Settings.SaveSettings(saveSettingsDialog.FileName, settings);
+
+			var folder = new FileInfo(saveSettingsDialog.FileName).Directory.FullName;
+			Spider.Settings.SaveRegistrySetting("Crawler.SettingsFolder", folder);
+
+		}
+
+		private void PopulateFormWithSettingsValues(CrawlerSettings settings)
+		{
+			textBoxUrl.Text = settings.Url;
+		}
+
+		private void PopulateSettingsWithFormValues(CrawlerSettings settings)
+		{
+			settings.Url = textBoxUrl.Text;
+		}
+
+		private void loadSettingsToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			openSettingsDialog.InitialDirectory = Spider.Settings.LoadRegistrySetting("Crawler.SettingsFolder");
+			openSettingsDialog.ShowDialog();
+
+		}
+
+		private void saveSettingsToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			saveSettingsDialog.InitialDirectory = Spider.Settings.LoadRegistrySetting("Crawler.SettingsFolder");
+			saveSettingsDialog.ShowDialog();
+		}
+	}
 }
