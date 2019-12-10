@@ -623,15 +623,13 @@ namespace CheckRequestedUrls
 
 		private void buttonOutputDirectory_Click(object sender, EventArgs e)
 		{
-			folderOutputDialog.SelectedPath = Spider.Settings.LoadRegistrySetting("CheckUrl.OutputFolder");
-			folderOutputDialog.ShowDialog();
-		}
-
-		private void folderOutputDialog_HelpRequest(object sender, EventArgs e)
-		{
-			textBoxOutputDirectory.Text = folderOutputDialog.SelectedPath;
-			Spider.Settings.SaveRegistrySetting("CheckUrl.OutputFolder", folderOutputDialog.SelectedPath);
-		}
+            folderOutputDialog.SelectedPath = Spider.Settings.LoadRegistrySetting("CheckUrl.OutputFolder");
+            if (folderOutputDialog.ShowDialog() == DialogResult.OK)
+            {
+                textBoxOutputDirectory.Text = folderOutputDialog.SelectedPath;
+                Spider.Settings.SaveRegistrySetting("CheckUrl.OutputFolder", folderOutputDialog.SelectedPath);
+            }
+        }
 
 		private void groupBox1_Enter(object sender, EventArgs e)
 		{

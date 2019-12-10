@@ -428,7 +428,6 @@
 			// folderOutputDialog
 			// 
 			this.folderOutputDialog.RootFolder = System.Environment.SpecialFolder.MyComputer;
-			this.folderOutputDialog.HelpRequest += new System.EventHandler(this.folderOutputDialog_HelpRequest);
 			// 
 			// linkLabelResultFolder
 			// 
