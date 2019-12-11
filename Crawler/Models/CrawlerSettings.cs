@@ -6,5 +6,9 @@ namespace Crawler.Models
     {
         public string SettingsType => this.ToString();
         public string Url { get; set; }
+
+        public string UserAgent { get; set; }
+
+        public string IndexFolder { get; set; }
     }
 }

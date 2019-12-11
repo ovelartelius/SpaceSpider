@@ -3,6 +3,9 @@ using System.ComponentModel;
 using System.IO;
 using System.Windows.Forms;
 using Crawler.Models;
+using Spider;
+using Spider.Extensions;
+using Spider.Models;
 
 namespace Crawler
 {
@@ -39,13 +42,17 @@ namespace Crawler
 
 		private void PopulateFormWithSettingsValues(CrawlerSettings settings)
 		{
-			textBoxUrl.Text = settings.Url;
-		}
+            textBoxUrl.Text = settings.Url;
+            textBoxUserAgent.Text = settings.UserAgent;
+            textBoxIndexDirectory.Text = settings.IndexFolder;
+        }
 
 		private void PopulateSettingsWithFormValues(CrawlerSettings settings)
 		{
 			settings.Url = textBoxUrl.Text;
-		}
+            settings.UserAgent = textBoxUserAgent.Text;
+            settings.IndexFolder = textBoxIndexDirectory.Text;
+        }
 
 		private void loadSettingsToolStripMenuItem_Click(object sender, EventArgs e)
 		{
@@ -59,5 +66,36 @@ namespace Crawler
 			saveSettingsDialog.InitialDirectory = Spider.Settings.LoadRegistrySetting("Crawler.SettingsFolder");
 			saveSettingsDialog.ShowDialog();
 		}
-	}
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            button1.Enabled = false;
+            var spider = new Spider.Spider();
+            var pageResult =  spider.CheckUrl(textBoxUrl.Text, null, textBoxUserAgent.Text);
+
+
+            //var serializer = new JsonSerializer();
+            textBoxResult.Text = pageResult.ToJson();
+            var folder = $"{textBoxIndexDirectory.Text}";
+            if (!Directory.Exists(folder))
+            {
+                Directory.CreateDirectory(folder);
+            }
+
+            var filePath = $"{folder}\\{pageResult.Uri.AbsoluteUri.ToFileSafeName()}.json";
+            Json.SaveAsFile<PageResult>(filePath, pageResult);
+
+            button1.Enabled = true;
+        }
+
+        private void buttonIndexDirectory_Click(object sender, EventArgs e)
+        {
+            folderIndexDialog.SelectedPath = Spider.Settings.LoadRegistrySetting("Crawler.IndexFolder");
+            if (folderIndexDialog.ShowDialog() == DialogResult.OK)
+            {
+                textBoxIndexDirectory.Text = folderIndexDialog.SelectedPath;
+                Spider.Settings.SaveRegistrySetting("Crawler.IndexFolder", folderIndexDialog.SelectedPath);
+            }
+        }
+    }
 }

@@ -14,7 +14,7 @@ namespace CheckRequestedUrls
         public string SearchUrl { get; set; }
         public string OutputDirectory { get; set; }
         public List<string> Urls { get; set; }
-        public List<SpiderPageLink> SpiderPageLinks { get; set; }
+        public List<PageResult> SpiderPageLinks { get; set; }
         public List<string> IgnorePatterns { get; set; }
         public bool RunOverVpn { get; set; }
         public bool IgnoreSearch { get; set; }

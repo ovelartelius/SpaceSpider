@@ -118,7 +118,7 @@ namespace CheckRequestedUrls
 
             backgroundWorkerUrlCheck.ReportProgress(-1, workLoad.Urls.Count);
 
-            var pageLinks = new List<SpiderPageLink>();
+            var pageLinks = new List<PageResult>();
             var newSiteUri = new Uri(workLoad.NewSiteDomain);
 
             var handledUrlList = new List<string>();
@@ -153,7 +153,7 @@ namespace CheckRequestedUrls
                     
 
                     //Log($"Convert {value.Url} to {newUrl}");
-                    SpiderPageLink spiderPageLink = new SpiderPageLink { Url = newUrl };
+                    PageResult spiderPageLink = new PageResult { Url = newUrl };
 
 
                     //var imagePatterns = spiderManifest.ImageContentTypeRegexPatternList;
@@ -211,7 +211,7 @@ namespace CheckRequestedUrls
                             throw new ApplicationException("TimedOut against search!!!", ex);
                         }
                     }
-                    var spiderPageLink = new SpiderPageLink { Url = url, Erroneous = true, Description = ex.Message };
+                    var spiderPageLink = new PageResult { Url = url, Erroneous = true, Description = ex.Message };
                     pageLinks.Add(spiderPageLink);
                 }
                 //progressBarWork.PerformStep();
@@ -261,14 +261,14 @@ namespace CheckRequestedUrls
             //
             // Receive the result from DoWork, and display it.
             //
-            _workLoad.SpiderPageLinks = e.Result as List<SpiderPageLink>;
+            _workLoad.SpiderPageLinks = e.Result as List<PageResult>;
 
             var listOf200Response = _workLoad.SpiderPageLinks.Where(x => x.StatusCode == HttpStatusCode.OK).OrderBy(x => x.Url).ToList();
 
             var listOf400Response = _workLoad.SpiderPageLinks.Where(x => x.StatusCode == HttpStatusCode.NotFound).OrderBy(x => x.Url).ToList();
 
-            var listOf400Missing = new List<SpiderPageLink>();
-            var listOf400NotMissing = new List<SpiderPageLink>();
+            var listOf400Missing = new List<PageResult>();
+            var listOf400NotMissing = new List<PageResult>();
             if (_workLoad.IgnoreSearch)
             {
                 listOf400Missing = listOf400Response.OrderBy(x => x.Url).ToList();
@@ -636,5 +636,15 @@ namespace CheckRequestedUrls
 			var folderName = linkLabelResultFolder.Text;
 			Process.Start(folderName);
 		}
-	}
+
+        private void textBoxOutputDirectory_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+    }
 }
