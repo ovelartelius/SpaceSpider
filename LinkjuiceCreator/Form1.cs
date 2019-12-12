@@ -306,7 +306,7 @@ namespace LinkjuiceCreator
             {
                 var sourceUri = new Uri(mappedUrl.SourceUrl);
 
-                sb.AppendLine($"            <link url=\"{sourceUri.PathAndQuery}\" contentId=\"{mappedUrl.PageId}\">");
+                sb.AppendLine($"            <link url=\"{sourceUri.PathAndQuery}\" contentId=\"{mappedUrl.PageId}\" />");
             }
             sb.AppendLine("     </domain>");
             sb.AppendLine(" </linkJuice>");
