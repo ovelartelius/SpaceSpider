@@ -48,7 +48,7 @@
             this.textBoxSearchUrl = new System.Windows.Forms.TextBox();
             this.labelSearchUrl = new System.Windows.Forms.Label();
             this.textBoxOutputDirectory = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
+            this.labelOutputDirectory = new System.Windows.Forms.Label();
             this.checkBoxOverVpn = new System.Windows.Forms.CheckBox();
             this.checkBoxIgnoreSearch = new System.Windows.Forms.CheckBox();
             this.checkBoxCheckDomainBeforeStart = new System.Windows.Forms.CheckBox();
@@ -203,7 +203,10 @@
             // 
             // backgroundWorkerLoadCsv
             // 
+            this.backgroundWorkerLoadCsv.WorkerReportsProgress = true;
+            this.backgroundWorkerLoadCsv.WorkerSupportsCancellation = true;
             this.backgroundWorkerLoadCsv.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorkerLoadCsv_DoWork);
+            //this.backgroundWorkerLoadCsv.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.backgroundWorkerLoadCsv_ProgressChanged);
             this.backgroundWorkerLoadCsv.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorkerLoadCsv_RunWorkerCompleted);
             // 
             // textBoxSearchUrl
@@ -231,18 +234,16 @@
             this.textBoxOutputDirectory.Name = "textBoxOutputDirectory";
             this.textBoxOutputDirectory.Size = new System.Drawing.Size(406, 20);
             this.textBoxOutputDirectory.TabIndex = 12;
-            this.textBoxOutputDirectory.Text = "C:\\dev\\SpaceSpider\\Poc\\Test\\";
             this.textBoxOutputDirectory.TextChanged += new System.EventHandler(this.textBoxOutputDirectory_TextChanged);
             // 
-            // label1
+            // labelOutputDirectory
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 309);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(85, 13);
-            this.label1.TabIndex = 11;
-            this.label1.Text = "Output directory:";
-            this.label1.Click += new System.EventHandler(this.label1_Click);
+            this.labelOutputDirectory.AutoSize = true;
+            this.labelOutputDirectory.Location = new System.Drawing.Point(6, 309);
+            this.labelOutputDirectory.Name = "labelOutputDirectory";
+            this.labelOutputDirectory.Size = new System.Drawing.Size(85, 13);
+            this.labelOutputDirectory.TabIndex = 11;
+            this.labelOutputDirectory.Text = "Output directory:";
             // 
             // checkBoxOverVpn
             // 
@@ -347,7 +348,7 @@
             this.tabPageBasic.Controls.Add(this.labelCsvFile);
             this.tabPageBasic.Controls.Add(this.textBoxOutputDirectory);
             this.tabPageBasic.Controls.Add(this.textBoxCsvFile);
-            this.tabPageBasic.Controls.Add(this.label1);
+            this.tabPageBasic.Controls.Add(this.labelOutputDirectory);
             this.tabPageBasic.Controls.Add(this.labelNewSiteDomain);
             this.tabPageBasic.Controls.Add(this.textBoxNewSiteDomain);
             this.tabPageBasic.Location = new System.Drawing.Point(4, 22);
@@ -488,7 +489,7 @@
         private System.Windows.Forms.TextBox textBoxSearchUrl;
         private System.Windows.Forms.Label labelSearchUrl;
         private System.Windows.Forms.TextBox textBoxOutputDirectory;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label labelOutputDirectory;
         private System.Windows.Forms.CheckBox checkBoxOverVpn;
         private System.Windows.Forms.CheckBox checkBoxIgnoreSearch;
         private System.Windows.Forms.CheckBox checkBoxCheckDomainBeforeStart;

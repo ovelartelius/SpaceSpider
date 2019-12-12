@@ -36,6 +36,27 @@ namespace Spider
             return result;
         }
 
+        public ValidationResult ValidateUrlOnSite(string url, string userAgent = "")
+        {
+            var validationResult = new ValidationResult();
+            var uri = new Uri(url);
+
+            // First we check that the new site domain is working.
+            var pageResult = CheckUrl(uri.AbsoluteUri, new List<string>(), userAgent);
+
+            if (pageResult.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                validationResult.Result = true;
+            }
+            else
+            {
+                validationResult.Result = false;
+                validationResult.ErrorMessage = $"Validate url: {url} - StatusCode:{pageResult.StatusCode}, expected {System.Net.HttpStatusCode.OK}";
+            }
+
+            return validationResult;
+        }
+
         public PageResult CheckUrl(string url, List<string> sourceUrls, string userAgent = "", string proxyAddress = "")
         {
             var result = new PageResult
@@ -49,13 +70,9 @@ namespace Spider
             //    Console.WriteLine("Start debug.");
             //}
 
-            //Biz.Log.LogDebug("CheckUrl:" + url);
-
             HttpWebResponse webResponse = null;
             try
             {
-                //http://gias.sebank.se:8080
-
                 //var webRequest = (HttpWebRequest)WebRequest.Create(uri);
                 var webRequest = default(HttpWebRequest);
                 //if (ContainPercentEncode(url))
@@ -246,8 +263,6 @@ namespace Spider
             dynamic dynamicResult;
             using (var wc = new WebClient())
             {
-                var usedProxy = false;
-
                 if (!string.IsNullOrEmpty(proxyAddress))
                 {
                     var webProxy = new WebProxy(proxyAddress);

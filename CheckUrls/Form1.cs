@@ -16,62 +16,78 @@ namespace CheckRequestedUrls
 {
     public partial class Form1 : Form
     {
-		private string _lastVisitedSettingsFolder;
-		private string _lastVisitedDataFolder;
-
 		public Form1()
         {
             InitializeComponent();
 
-			_lastVisitedSettingsFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-			_lastVisitedDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-
-		}
+            if (!string.IsNullOrEmpty(Spider.Settings.LoadRegistrySetting("CheckUrl.SettingsFile")))
+            {
+                var settingsFile = Spider.Settings.LoadRegistrySetting("CheckUrl.SettingsFile");
+                var settings = Spider.Settings.LoadSettings<CheckUrlsSettings>(settingsFile);
+                Console.WriteLine($"Autoload latest settings {settingsFile}");
+                PopulateFormWithSettingsValues(settings);
+            }
+        }
 
         private void buttonStartWork_Click(object sender, EventArgs e)
         {
 			linkLabelResultFolder.Text = string.Empty;
-			textBoxLog.Text = string.Empty;
+			LogReset();
 			buttonStartWork.Enabled = false;
 			_workLoad = PopulateWorkLoad();
 
-			if (!ValidateNewSiteDomain(_workLoad))
-			{
-				Log($"Can not start the job. New site domain {_workLoad.NewSiteDomain} is not working.");
-				return;
-			}
+            var settings = new CheckUrlsSettings();
+            PopulateSettingsWithFormValues(settings);
+
+            if (settings.CheckSiteDomainBeforeStart)
+            {
+                var spider = new Spider.Spider();
+                var validationResult = spider.ValidateUrlOnSite(settings.NewSiteDomain, settings.UserAgent);
+                if (!validationResult.Result)
+                {
+                    Log(validationResult.ErrorMessage);
+                    Log($"Can not start the job. New site domain {settings.NewSiteDomain} is not working.");
+                    return;
+                }
+            }
+			
+            //if (!ValidateNewSiteDomain(_workLoad))
+            //{
+            //	Log($"Can not start the job. New site domain {_workLoad.NewSiteDomain} is not working.");
+            //	return;
+            //}
 
             backgroundWorkerLoadCsv.RunWorkerAsync(_workLoad);
 
         }
 
-		private bool ValidateNewSiteDomain(WorkLoad workLoad)
-		{
-			var valid = false;
-			var spider = new Spider.Spider();
-			var newSiteUri = new Uri(_workLoad.NewSiteDomain);
+		//private bool ValidateNewSiteDomain(WorkLoad workLoad)
+		//{
+		//	var valid = false;
+		//	var spider = new Spider.Spider();
+		//	var newSiteUri = new Uri(_workLoad.NewSiteDomain);
 
-			if (_workLoad.CheckDomainBeforeStart)
-			{
-				// First we check that the new site domain is working.
-				var newSitePageLink = spider.CheckUrl(newSiteUri.AbsoluteUri, new List<string>(), _workLoad.UserAgent);
+		//	if (_workLoad.CheckDomainBeforeStart)
+		//	{
+		//		// First we check that the new site domain is working.
+		//		var newSitePageLink = spider.CheckUrl(newSiteUri.AbsoluteUri, new List<string>(), _workLoad.UserAgent);
 
-				if (newSitePageLink.StatusCode == System.Net.HttpStatusCode.OK)
-				{
-					valid = true;
-				}
-				else
-				{
-					Log($"Validate New site domain: {_workLoad.NewSiteDomain} - StatusCode:{newSitePageLink.StatusCode}, expected {System.Net.HttpStatusCode.OK}");
-				}
-			}
-			else
-			{
-				valid = true;
-			}
+		//		if (newSitePageLink.StatusCode == System.Net.HttpStatusCode.OK)
+		//		{
+		//			valid = true;
+		//		}
+		//		else
+		//		{
+		//			Log($"Validate New site domain: {_workLoad.NewSiteDomain} - StatusCode:{newSitePageLink.StatusCode}, expected {System.Net.HttpStatusCode.OK}");
+		//		}
+		//	}
+		//	else
+		//	{
+		//		valid = true;
+		//	}
 
-			return valid;
-		}
+		//	return valid;
+		//}
 
 		private WorkLoad PopulateWorkLoad()
 		{
@@ -131,7 +147,7 @@ namespace CheckRequestedUrls
                 //TODO: Add duplicate check
                 if (handledUrlList.Contains(url))
                 {
-                    break;
+                    continue;
                 }
                 else
                 {
@@ -471,6 +487,8 @@ namespace CheckRequestedUrls
         {
             var workLoad = e.Argument as WorkLoad;
 
+            //backgroundWorkerLoadCsv.ReportProgress(-1, 1);
+
             //Log($"Start load CSV file {workLoad.CsvFile}");
             List<CsvSimpleUrl> values = File.ReadAllLines(workLoad.CsvFile)
                                             .Skip(1)
@@ -564,7 +582,8 @@ namespace CheckRequestedUrls
 
 			var folder = new FileInfo(openSettingsDialog.FileName).Directory.FullName;
 			Spider.Settings.SaveRegistrySetting("CheckUrl.SettingsFolder", folder);
-		}
+            Spider.Settings.SaveRegistrySetting("CheckUrl.SettingsFile", openSettingsDialog.FileName);
+        }
 
         private void saveSettingsDialog_FileOk(object sender, CancelEventArgs e)
         {
@@ -638,11 +657,6 @@ namespace CheckRequestedUrls
 		}
 
         private void textBoxOutputDirectory_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label1_Click(object sender, EventArgs e)
         {
 
         }

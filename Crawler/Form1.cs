@@ -14,6 +14,15 @@ namespace Crawler
         public Form1()
         {
             InitializeComponent();
+
+            if (!string.IsNullOrEmpty(Spider.Settings.LoadRegistrySetting("Crawler.SettingsFile")))
+            {
+                var settingsFile = Spider.Settings.LoadRegistrySetting("Crawler.SettingsFile");
+                var settings = Spider.Settings.LoadSettings<CrawlerSettings>(settingsFile);
+                Console.WriteLine($"Autoload latest settings {settingsFile}");
+                PopulateFormWithSettingsValues(settings);
+            }
+
         }
 
         private void openSettingsDialog_FileOk(object sender, CancelEventArgs e)
@@ -25,8 +34,8 @@ namespace Crawler
 
 			var folder = new FileInfo(openSettingsDialog.FileName).Directory.FullName;
 			Spider.Settings.SaveRegistrySetting("Crawler.SettingsFolder", folder);
-
-		}
+            Spider.Settings.SaveRegistrySetting("Crawler.SettingsFile", openSettingsDialog.FileName);
+        }
 
         private void saveSettingsDialog_FileOk(object sender, CancelEventArgs e)
         {

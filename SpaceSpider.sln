@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spider.Tests", "Spider.Test
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckUrls", "CheckUrls\CheckUrls.csproj", "{9821E474-8EAA-4AE2-BB64-297559D4F03F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinkjuiceCreator", "LinkjuiceCreator\LinkjuiceCreator.csproj", "{0E14DE20-3C0D-4404-8BF8-162A2A55D343}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{9821E474-8EAA-4AE2-BB64-297559D4F03F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9821E474-8EAA-4AE2-BB64-297559D4F03F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9821E474-8EAA-4AE2-BB64-297559D4F03F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E14DE20-3C0D-4404-8BF8-162A2A55D343}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E14DE20-3C0D-4404-8BF8-162A2A55D343}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E14DE20-3C0D-4404-8BF8-162A2A55D343}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E14DE20-3C0D-4404-8BF8-162A2A55D343}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
