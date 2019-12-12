@@ -5,6 +5,9 @@
 
 Result*.txt
 Result*.csv
+[Oo]utput/
+[Ss]ettings/
+[Ii]ndexes/
 
 # User-specific files
 *.suo
