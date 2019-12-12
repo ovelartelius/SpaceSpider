@@ -157,7 +157,42 @@ namespace LinkjuiceCreator
 
             backgroundWorkerLoadCsv.RunWorkerAsync(settings);
 
+            //Task t = Task.Run(() => {
+            //    LoadCsv(settings);
+            //});
+            //t.Wait();
+            ////TimeSpan ts = TimeSpan.FromMilliseconds(150);
+            ////if (!t.Wait(ts))
+            ////    Console.WriteLine("The timeout interval elapsed.");
         }
+
+        //private void LoadCsv(LinkjuiceCreatorSettings settings)
+        //{
+        //    //progressBarWork.Maximum = 1;
+        //    var manifest = new Manifest { Settings = settings };
+
+        //    //progressBarWork.Value = 0;
+        //    List<CsvMappedUrls> values = File.ReadAllLines(manifest.Settings.CsvFilePath)
+        //        .Skip((manifest.Settings.FirstRowContainsTitle ? 1 : 0))
+        //        .Select(v => CsvMappedUrls.FromCsv(v, manifest.Settings.CsvFileSeperator))
+        //        .Distinct()
+        //        .ToList();
+        //    manifest.MappedUrls = values;
+
+        //    //progressBarWork.Value = 1;
+
+        //    _manifest = manifest;
+        //    //Log($"Found {_manifest.MappedUrls.Count().ToString()} URLs in the CSV file.");
+
+        //    //Log($"Clean CSV data.");
+        //    _manifest.MappedUrls = _manifest.MappedUrls
+        //        .Where(x => !string.IsNullOrEmpty(x.SourceUrl) && !string.IsNullOrEmpty(x.DestinationUrl)).ToList();
+
+        //    //Log($"Found {_manifest.MappedUrls.Count().ToString()} URLs to check.");
+
+        //    StartDoWork();
+
+        //}
 
         private void LogReset()
         {
