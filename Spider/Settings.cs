@@ -26,13 +26,15 @@ namespace Spider
 
             try
             {
-                using (StreamWriter file = File.CreateText(fileUri))
-                {
-                    var serializer = new JsonSerializer();
-                    //serialize object directly into file stream
-                    serializer.Serialize(file, settings);
+                Json.SaveAsFile<T>(fileUri, settings);
+
+                //using (StreamWriter file = File.CreateText(fileUri))
+                //{
+                //    var serializer = new JsonSerializer();
+                //    //serialize object directly into file stream
+                //    serializer.Serialize(file, settings);
                     result = true;
-                }
+                //}
 
             }
             catch (Exception e)

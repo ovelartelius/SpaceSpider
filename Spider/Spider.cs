@@ -31,15 +31,14 @@ namespace Spider
             }
             catch (Exception ex)
             {
-                //Biz.Log.LogWarning(ex.Message);
-                //Biz.Log.LogInfo($"URL {url} is not a valid.");
+                Console.WriteLine(ex.Message);
             }
             return result;
         }
 
-        public SpiderPageLink CheckUrl(string url, List<string> sourceUrls, string userAgent = "", string proxyAddress = "")
+        public PageResult CheckUrl(string url, List<string> sourceUrls, string userAgent = "", string proxyAddress = "")
         {
-            var result = new SpiderPageLink
+            var result = new PageResult
             {
                 StatusCode = HttpStatusCode.BadRequest,
                 Url = url
