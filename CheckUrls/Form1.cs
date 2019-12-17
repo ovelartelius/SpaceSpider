@@ -47,6 +47,7 @@ namespace CheckRequestedUrls
                 {
                     Log(validationResult.ErrorMessage);
                     Log($"Can not start the job. New site domain {settings.NewSiteDomain} is not working.");
+                    buttonStartWork.Enabled = true;
                     return;
                 }
             }
