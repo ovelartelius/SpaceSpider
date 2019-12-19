@@ -47,8 +47,9 @@
   <ItemGroup>
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Json.cs" />
+    <Compile Include="Models\CheckUrlManifest.cs" />
     <Compile Include="Models\ISettings.cs" />
-    <Compile Include="Models\PageResult.cs" />
+    <Compile Include="Models\CheckUrlResult.cs" />
     <Compile Include="Models\ValidationResult.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

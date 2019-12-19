@@ -10,6 +10,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using CheckRequestedUrls.Models;
+using Spider.Extensions;
 using Spider.Models;
 
 namespace CheckRequestedUrls
@@ -51,44 +52,9 @@ namespace CheckRequestedUrls
                     return;
                 }
             }
-			
-            //if (!ValidateNewSiteDomain(_workLoad))
-            //{
-            //	Log($"Can not start the job. New site domain {_workLoad.NewSiteDomain} is not working.");
-            //	return;
-            //}
 
             backgroundWorkerLoadCsv.RunWorkerAsync(_workLoad);
-
         }
-
-		//private bool ValidateNewSiteDomain(WorkLoad workLoad)
-		//{
-		//	var valid = false;
-		//	var spider = new Spider.Spider();
-		//	var newSiteUri = new Uri(_workLoad.NewSiteDomain);
-
-		//	if (_workLoad.CheckDomainBeforeStart)
-		//	{
-		//		// First we check that the new site domain is working.
-		//		var newSitePageLink = spider.CheckUrl(newSiteUri.AbsoluteUri, new List<string>(), _workLoad.UserAgent);
-
-		//		if (newSitePageLink.StatusCode == System.Net.HttpStatusCode.OK)
-		//		{
-		//			valid = true;
-		//		}
-		//		else
-		//		{
-		//			Log($"Validate New site domain: {_workLoad.NewSiteDomain} - StatusCode:{newSitePageLink.StatusCode}, expected {System.Net.HttpStatusCode.OK}");
-		//		}
-		//	}
-		//	else
-		//	{
-		//		valid = true;
-		//	}
-
-		//	return valid;
-		//}
 
 		private WorkLoad PopulateWorkLoad()
 		{
@@ -105,37 +71,22 @@ namespace CheckRequestedUrls
 				IgnoreSearch = checkBoxIgnoreSearch.Checked,
 				CheckDomainBeforeStart = checkBoxCheckDomainBeforeStart.Checked
 			};
-
-			var patterns = textBoxIgnorePatterns.Text.Split('\n');
-			foreach (var pattern in patterns)
-			{
-				var patternValue = pattern;
-				if (patternValue.Contains("\r"))
-				{
-					patternValue = patternValue.Replace("\r", "");
-				}
-				workLoad.IgnorePatterns.Add(patternValue);
-			}
+            workLoad.IgnorePatterns = textBoxIgnorePatterns.Text.SplitToList();
 
 			return workLoad;
 		}
 
         #region BackgroundWorkerUrlCheck
+
         private void backgroundWorkerUrlCheck_DoWork(object sender, DoWorkEventArgs e)
         {
             var workLoad = e.Argument as WorkLoad;
             
             var spider = new Spider.Spider();
-            //LogReset();
-
-            //Log($"Found {values.Count()} URLs in the file {workLoad.CsvFile}");
-
-            //progressBarWork.Maximum = workLoad.Urls.Count;
-            //progressBarWork.Value = 0;
 
             backgroundWorkerUrlCheck.ReportProgress(-1, workLoad.Urls.Count);
 
-            var pageLinks = new List<PageResult>();
+            var pageLinks = new List<CheckUrlResult>();
             var newSiteUri = new Uri(workLoad.NewSiteDomain);
 
             var handledUrlList = new List<string>();
@@ -145,7 +96,6 @@ namespace CheckRequestedUrls
             {
                 Console.WriteLine($"Url-{i}");
                 // Check duplicates
-                //TODO: Add duplicate check
                 if (handledUrlList.Contains(url))
                 {
                     continue;
@@ -157,42 +107,28 @@ namespace CheckRequestedUrls
 
                 try
                 {
-                    var oldUri = new Uri(url);
-                    var newUrl = string.Empty;
-                    if (newSiteUri.Port != 80 && newSiteUri.Port != 443)
+                    var newUrl = url.SwapHostname(workLoad.NewSiteDomain);
+
+                    //Log($"Convert {value.Url} to {newUrl}");
+                    var checkUrlResult = new CheckUrlResult { Url = newUrl };
+
+                    if (spider.ShouldUrlBeIgnored(newUrl, workLoad.IgnorePatterns))
                     {
-                        newUrl = $"{newSiteUri.Scheme}://{newSiteUri.Host}:{newSiteUri.Port}{oldUri.PathAndQuery}";
+                        checkUrlResult.StatusCode = HttpStatusCode.SeeOther;
+                        checkUrlResult.Ignored = true;
                     }
                     else
                     {
-                        newUrl = $"{newSiteUri.Scheme}://{newSiteUri.Host}{oldUri.PathAndQuery}";
-                    }
-                    
-
-                    //Log($"Convert {value.Url} to {newUrl}");
-                    PageResult spiderPageLink = new PageResult { Url = newUrl };
-
-
-                    //var imagePatterns = spiderManifest.ImageContentTypeRegexPatternList;
-                    foreach (var pattern in workLoad.IgnorePatterns)
-                    {
-                        if (Regex.IsMatch(newUrl, pattern))
-                        {
-                            // We should ignore to test this URL.
-                            spiderPageLink.StatusCode = HttpStatusCode.SeeOther;
-                            spiderPageLink.Ignored = true;
-                            break;
-                        }
-                    }
-
-                    if (!spiderPageLink.Ignored)
-                    {
-                        spiderPageLink = spider.CheckUrl(newUrl, new List<string>(), workLoad.UserAgent);
+                        var checkUrlManifest = new CheckUrlManifest();
+                        checkUrlManifest.Url = newUrl;
+                        checkUrlManifest.SourceUrls = new List<string>();
+                        checkUrlManifest.UserAgent = workLoad.UserAgent;
+                        checkUrlResult = spider.CheckUrl(checkUrlManifest);
 
                         if (!workLoad.IgnoreSearch)
                         {
                             // Go a check against the search.
-                            var oldUrlPathAndQuery = WebUtility.UrlEncode(oldUri.PathAndQuery);
+                            var oldUrlPathAndQuery = WebUtility.UrlEncode(new Uri(url).PathAndQuery);
                             dynamic something;
                             var searchUrl = string.Empty;
                             //var searchUrl = $"https://pws-search1-tst.sebank.se/rest/apps/stats/searchers/paths?hits=20&q={oldUrlPathAndQuery}&range!gte!@timestamp=now-30d/d";
@@ -211,12 +147,12 @@ namespace CheckRequestedUrls
                             var totalHits = something.stats.totalHits;
                             if (totalHits != 0)
                             {
-                                spiderPageLink.HistoricHits = totalHits;
+                                checkUrlResult.HistoricHits = totalHits;
                             }
                         }
                     }
 
-                    pageLinks.Add(spiderPageLink);
+                    pageLinks.Add(checkUrlResult);
 
                 }
                 catch (Exception ex)
@@ -228,7 +164,7 @@ namespace CheckRequestedUrls
                             throw new ApplicationException("TimedOut against search!!!", ex);
                         }
                     }
-                    var spiderPageLink = new PageResult { Url = url, Erroneous = true, Description = ex.Message };
+                    var spiderPageLink = new CheckUrlResult { Url = url, Erroneous = true, Description = ex.Message };
                     pageLinks.Add(spiderPageLink);
                 }
                 //progressBarWork.PerformStep();
@@ -278,14 +214,14 @@ namespace CheckRequestedUrls
             //
             // Receive the result from DoWork, and display it.
             //
-            _workLoad.SpiderPageLinks = e.Result as List<PageResult>;
+            _workLoad.SpiderPageLinks = e.Result as List<CheckUrlResult>;
 
             var listOf200Response = _workLoad.SpiderPageLinks.Where(x => x.StatusCode == HttpStatusCode.OK).OrderBy(x => x.Url).ToList();
 
             var listOf400Response = _workLoad.SpiderPageLinks.Where(x => x.StatusCode == HttpStatusCode.NotFound).OrderBy(x => x.Url).ToList();
 
-            var listOf400Missing = new List<PageResult>();
-            var listOf400NotMissing = new List<PageResult>();
+            var listOf400Missing = new List<CheckUrlResult>();
+            var listOf400NotMissing = new List<CheckUrlResult>();
             if (_workLoad.IgnoreSearch)
             {
                 listOf400Missing = listOf400Response.OrderBy(x => x.Url).ToList();

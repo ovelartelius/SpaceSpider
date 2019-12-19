@@ -1,4 +1,6 @@
-﻿using System.Text.RegularExpressions;
+﻿using System;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace Spider.Extensions
 {
@@ -11,5 +13,38 @@ namespace Spider.Extensions
             return safeString;
         }
 
+        public static List<string> SplitToList(this string data)
+        {
+            var list = new List<string>();
+            var patterns = data.Split('\n');
+            foreach (var pattern in patterns)
+            {
+                var patternValue = pattern;
+                if (patternValue.Contains("\r"))
+                {
+                    patternValue = patternValue.Replace("\r", "");
+                }
+                list.Add(patternValue);
+            }
+
+            return list;
+        }
+
+        public static string SwapHostname(this string oldUrl, string newHostname)
+        {
+            var oldUri = new Uri(oldUrl);
+            var newHostnameUri = new Uri(newHostname);
+            var newUrl = string.Empty;
+            if (newHostnameUri.Port != 80 && newHostnameUri.Port != 443)
+            {
+                newUrl = $"{newHostnameUri.Scheme}://{newHostnameUri.Host}:{newHostnameUri.Port}{oldUri.PathAndQuery}";
+            }
+            else
+            {
+                newUrl = $"{newHostnameUri.Scheme}://{newHostnameUri.Host}{oldUri.PathAndQuery}";
+            }
+
+            return newUrl;
+        }
     }
 }

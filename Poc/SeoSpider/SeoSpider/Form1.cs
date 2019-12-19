@@ -59,16 +59,16 @@ namespace SeoSpider
 			IgnoreList.Add("^http:\\/\\/ted.europa.eu\\/");
 			IgnoreList.Add("^https:\\/\\/instagram.com\\/"); 
 			IgnoreList.Add("\\/press-and-media\\/");
-			//IgnoreList.Add("\\/news-and-media\\/");
-			//IgnoreList.Add("\\/Nyheder\\/");
-			//IgnoreList.Add("\\/uutiset\\/");
-			//IgnoreList.Add("\\/newsroom\\/");
-			//IgnoreList.Add("\\/press-och-media\\/");
-			//IgnoreList.Add("\\/nieuws\\/");
+            //IgnoreList.Add("\\/news-and-media\\/");
+            //IgnoreList.Add("\\/Nyheder\\/");
+            //IgnoreList.Add("\\/uutiset\\/");
+            //IgnoreList.Add("\\/newsroom\\/");
+            //IgnoreList.Add("\\/press-och-media\\/");
+            //IgnoreList.Add("\\/nieuws\\/");
 
-			
 
-			PagesWith404Result.Text = string.Empty;
+
+            PagesWith404Result.Text = string.Empty;
 
 			//_bWorker = new BackgroundWorker();
 

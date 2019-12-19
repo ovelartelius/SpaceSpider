@@ -215,7 +215,7 @@ namespace LinkjuiceCreator
 
             backgroundWorkerDoJob.ReportProgress(-1, manifest.MappedUrls.Count);
 
-            manifest.PageResults = new List<PageResult>();
+            manifest.PageResults = new List<CheckUrlResult>();
             var newSiteUri = new Uri(manifest.Settings.NewSiteDomain);
 
             var handledUrlList = new List<string>();
@@ -237,7 +237,7 @@ namespace LinkjuiceCreator
                         newUrl = $"{newSiteUri.Scheme}://{newSiteUri.Host}{oldUri.PathAndQuery}";
                     }
 
-                    var pageResult = new PageResult { Url = newUrl };
+                    var pageResult = new CheckUrlResult { Url = newUrl };
 
                     // Check duplicates
                     if (handledUrlList.Contains(newUrl))
@@ -253,23 +253,14 @@ namespace LinkjuiceCreator
                     {
                         handledUrlList.Add(newUrl);
 
-                        //foreach (var pattern in manifest.IgnorePatterns)
-                        //{
-                        //    if (Regex.IsMatch(newUrl, pattern))
-                        //    {
-                        //        // We should ignore to test this URL.
-                        //        spiderPageLink.StatusCode = HttpStatusCode.SeeOther;
-                        //        spiderPageLink.Ignored = true;
-                        //        break;
-                        //    }
-                        //}
+                        var checkUrlManifest = new CheckUrlManifest();
+                        checkUrlManifest.Url = newUrl;
+                        checkUrlManifest.SourceUrls = new List<string>();
+                        checkUrlManifest.UserAgent = manifest.Settings.UserAgent;
 
-                        //if (!spiderPageLink.Ignored)
-                        //{
-                        pageResult = spider.CheckUrl(newUrl, new List<string>(), manifest.Settings.UserAgent);
+                        pageResult = spider.CheckUrl(checkUrlManifest);
                         mappedUrls.PageResult = pageResult;
                         mappedUrls.PageId = Int32.Parse(pageResult.Headers[manifest.Settings.PageVariableHeaderName]);
-                        //}
 
                         manifest.PageResults.Add(pageResult);
                     }

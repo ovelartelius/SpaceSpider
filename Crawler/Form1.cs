@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Windows.Forms;
@@ -52,15 +53,24 @@ namespace Crawler
 		private void PopulateFormWithSettingsValues(CrawlerSettings settings)
 		{
             textBoxUrl.Text = settings.Url;
-            textBoxUserAgent.Text = settings.UserAgent;
             textBoxIndexDirectory.Text = settings.IndexFolder;
+
+            textBoxUserAgent.Text = settings.UserAgent;
+
+            textBoxIgnoreLinksPatterns.Text = settings.IgnoreLinksPatterns;
+            textBoxIgnoreExternalHostsRegExPatterns.Text = settings.IgnoreExternalHostsPatterns;
+
         }
 
-		private void PopulateSettingsWithFormValues(CrawlerSettings settings)
+        private void PopulateSettingsWithFormValues(CrawlerSettings settings)
 		{
 			settings.Url = textBoxUrl.Text;
-            settings.UserAgent = textBoxUserAgent.Text;
             settings.IndexFolder = textBoxIndexDirectory.Text;
+
+            settings.UserAgent = textBoxUserAgent.Text;
+
+            settings.IgnoreLinksPatterns = textBoxIgnoreLinksPatterns.Text;
+            settings.IgnoreExternalHostsPatterns = textBoxIgnoreExternalHostsRegExPatterns.Text;
         }
 
 		private void loadSettingsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -76,12 +86,33 @@ namespace Crawler
 			saveSettingsDialog.ShowDialog();
 		}
 
-        private void button1_Click(object sender, EventArgs e)
+        private void buttonIndexDirectory_Click(object sender, EventArgs e)
         {
-            button1.Enabled = false;
-            var spider = new Spider.Spider();
-            var pageResult =  spider.CheckUrl(textBoxUrl.Text, null, textBoxUserAgent.Text);
+            folderIndexDialog.SelectedPath = Spider.Settings.LoadRegistrySetting("Crawler.IndexFolder");
+            if (folderIndexDialog.ShowDialog() == DialogResult.OK)
+            {
+                textBoxIndexDirectory.Text = folderIndexDialog.SelectedPath;
+                Spider.Settings.SaveRegistrySetting("Crawler.IndexFolder", folderIndexDialog.SelectedPath);
+            }
+        }
 
+        private void buttonStartWork_Click(object sender, EventArgs e)
+        {
+            buttonStartWork.Enabled = false;
+
+            var manifest = new CrawlerSettings();
+            PopulateSettingsWithFormValues(manifest);
+            manifest.IgnoreLinksPatternsList = textBoxIgnoreLinksPatterns.Text.SplitToList();
+            manifest.IgnoreExternalHostsPatternsList = textBoxIgnoreExternalHostsRegExPatterns.Text.SplitToList();
+
+
+
+            var spider = new Spider.Spider();
+            var checkUrlManifest = new CheckUrlManifest();
+            checkUrlManifest.Url = manifest.Url;
+            checkUrlManifest.SourceUrls = new List<string>();
+            checkUrlManifest.UserAgent = manifest.UserAgent;
+            var pageResult = spider.CheckUrl(checkUrlManifest);
 
             //var serializer = new JsonSerializer();
             textBoxResult.Text = pageResult.ToJson();
@@ -92,19 +123,9 @@ namespace Crawler
             }
 
             var filePath = $"{folder}\\{pageResult.Uri.AbsoluteUri.ToFileSafeName()}.json";
-            Json.SaveAsFile<PageResult>(filePath, pageResult);
+            Json.SaveAsFile<CheckUrlResult>(filePath, pageResult);
 
-            button1.Enabled = true;
-        }
-
-        private void buttonIndexDirectory_Click(object sender, EventArgs e)
-        {
-            folderIndexDialog.SelectedPath = Spider.Settings.LoadRegistrySetting("Crawler.IndexFolder");
-            if (folderIndexDialog.ShowDialog() == DialogResult.OK)
-            {
-                textBoxIndexDirectory.Text = folderIndexDialog.SelectedPath;
-                Spider.Settings.SaveRegistrySetting("Crawler.IndexFolder", folderIndexDialog.SelectedPath);
-            }
+            buttonStartWork.Enabled = true;
         }
     }
 }

@@ -10,6 +10,6 @@ namespace LinkjuiceCreator
 
         public List<CsvMappedUrls> MappedUrls { get; set; }
 
-        public List<PageResult> PageResults { get; set; }
+        public List<CheckUrlResult> PageResults { get; set; }
     }
 }

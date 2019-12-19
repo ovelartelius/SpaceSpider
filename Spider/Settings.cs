@@ -28,14 +28,7 @@ namespace Spider
             {
                 Json.SaveAsFile<T>(fileUri, settings);
 
-                //using (StreamWriter file = File.CreateText(fileUri))
-                //{
-                //    var serializer = new JsonSerializer();
-                //    //serialize object directly into file stream
-                //    serializer.Serialize(file, settings);
-                    result = true;
-                //}
-
+                result = true;
             }
             catch (Exception e)
             {
@@ -48,26 +41,29 @@ namespace Spider
 
 		public static void SaveRegistrySetting(string key, string value)
 		{
-			var regkey = Registry.CurrentUser.OpenSubKey("SpaceSpider", true);
-			if (regkey == null)
+			var registryKey = Registry.CurrentUser.OpenSubKey("SpaceSpider", true);
+			if (registryKey == null)
 			{
-				regkey = Registry.CurrentUser.CreateSubKey("SpaceSpider");
+				registryKey = Registry.CurrentUser.CreateSubKey("SpaceSpider");
 			}
 
-			if (regkey != null)
+			if (registryKey != null)
 			{
-				regkey.SetValue(key.ToString(), value);
-				regkey.Close();
+				registryKey.SetValue(key.ToString(), value);
+				registryKey.Close();
 			}
 		}
 
 		public static string LoadRegistrySetting(string key)
 		{
 			var result = string.Empty;
-			var regkey = Registry.CurrentUser.OpenSubKey("SpaceSpider");
+			var registryKey = Registry.CurrentUser.OpenSubKey("SpaceSpider");
 			try
 			{
-				result = regkey.GetValue(key.ToString()).ToString();
+                if (registryKey != null)
+                {
+                    result = registryKey.GetValue(key.ToString()).ToString();
+                }
 			}
 			catch
 			{

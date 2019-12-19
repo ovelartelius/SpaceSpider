@@ -5,9 +5,9 @@ using System.Net;
 
 namespace Spider.Models
 {
-    public class PageResult
+    public class CheckUrlResult
     {
-        public PageResult()
+        public CheckUrlResult()
         {
             Headers = new NameValueCollection();
         }

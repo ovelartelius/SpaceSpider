@@ -9,7 +9,7 @@ namespace LinkjuiceCreator
 
         public string DestinationUrl { get; set; }
 
-        public PageResult PageResult { get; set; }
+        public CheckUrlResult PageResult { get; set; }
         public int PageId { get; set; }
         public string ErrorMessage { get; set; }
 
