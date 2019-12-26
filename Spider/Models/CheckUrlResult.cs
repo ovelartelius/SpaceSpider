@@ -39,6 +39,8 @@ namespace Spider.Models
 
         public string Description { get; set; }
 
+        public string Redirect { get; set; }
+
         public bool Erroneous { get; set; }
 
         [JsonIgnore]

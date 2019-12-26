@@ -424,9 +424,6 @@ namespace CheckRequestedUrls
         {
             var workLoad = e.Argument as WorkLoad;
 
-            //backgroundWorkerLoadCsv.ReportProgress(-1, 1);
-
-            //Log($"Start load CSV file {workLoad.CsvFile}");
             List<CsvSimpleUrl> values = File.ReadAllLines(workLoad.CsvFile)
                                             .Skip(1)
                                             .Select(v => CsvSimpleUrl.FromCsv(v))
@@ -454,8 +451,6 @@ namespace CheckRequestedUrls
             // Receive the result from DoWork, and display it.
             //
             _workLoad.Urls = e.Result as List<string>;
-
-            //this.Text = test.OneValue.ToString() + " " + test.TwoValue.ToString();
 
             // Remove all emty
             _workLoad.Urls = _workLoad.Urls.Where(x => !string.IsNullOrEmpty(x)).ToList();

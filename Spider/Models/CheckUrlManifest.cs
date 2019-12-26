@@ -4,10 +4,19 @@ namespace Spider.Models
 {
     public class CheckUrlManifest
     {
+        public CheckUrlManifest()
+        {
+            ContentTypesToDownload = new List<string>();
+            ContentTypesToDownload.Add("text/");
+            ContentTypesToDownload.Add("application/javascript");
+        }
+
         public string Url { get; set; }
         public List<string> SourceUrls { get; set; }
         public string UserAgent { get; set; }
         public string ProxyAddress { get; set; }
+
+        public List<string> ContentTypesToDownload { get; set; }
 
         public bool UseUserAgent
         {
