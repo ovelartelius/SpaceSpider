@@ -6,6 +6,8 @@ namespace CheckRequestedUrls.Models
     {
         public string SettingsType => this.ToString();
         public string CsvFilePath { get; set; }
+        public bool FirstRowContainsTitle { get; set; }
+        public string CsvFileSeperator { get; set; }
         public string IgnorePatterns { get; set; }
 		public string SearchUrl { get; set; }
 		public bool RunningOverVpn { get; set; }

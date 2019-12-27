@@ -43,6 +43,20 @@ namespace Spider.Tests.Spider.Extensions
         }
 
         [TestMethod]
+        public void SplitToList_Empty_Test()
+        {
+            //Arrange
+            var data = string.Empty;
+
+            //Act
+            var list = data.SplitToList();
+
+            //Assert
+            Assert.IsNotNull(list);
+            Assert.AreEqual(0, list.Count);
+        }
+
+        [TestMethod]
         public void SwapHostname_SimpleAddress_httpTohttps()
         {
             //Arrange

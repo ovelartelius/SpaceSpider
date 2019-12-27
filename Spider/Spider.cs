@@ -206,11 +206,18 @@ namespace Spider
                 // Get more information from the response.
                 checkUrlResult.Redirect = webResponse.Headers["Location"];
             }
+            catch (WebException webEx)
+            {
+                Console.WriteLine(webEx.Message);
+                checkUrlResult = HandleWebException(webEx, checkUrlResult);
+            }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                checkUrlResult.StatusCode = HttpStatusCode.BadRequest;
+                checkUrlResult.Description = $"Could not request {manifest.Url}";
             }
-            
+
             webResponse?.Close();
 
             return checkUrlResult;
@@ -249,7 +256,7 @@ namespace Spider
                     Url = locationUrl
                 };
                 newManifest.SourceUrls = manifest.SourceUrls;
-                manifest.SourceUrls.Add(manifest.Url);
+                newManifest.SourceUrls.Add(manifest.Url);
                 var locationResult = CheckUrl(newManifest);
                 if (locationResult.StatusCode == HttpStatusCode.NotFound || locationResult.StatusCode == HttpStatusCode.Gone ||
                     locationResult.StatusCode == HttpStatusCode.InternalServerError)
@@ -259,7 +266,7 @@ namespace Spider
                 }
 
                 // We should also check if the location conatins aspxerrorpath
-                if (checkUrlResult.Erroneous == false && checkUrlResult.Description.Contains("aspxerrorpath="))
+                if (checkUrlResult.Erroneous == false && checkUrlResult.Redirect.Contains("aspxerrorpath="))
                 {
                     // We have been redirected to a ASPX custom error page.
                     checkUrlResult.Erroneous = true;

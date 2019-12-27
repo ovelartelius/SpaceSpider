@@ -72,8 +72,12 @@ namespace CheckRequestedUrls
 				CheckDomainBeforeStart = checkBoxCheckDomainBeforeStart.Checked
 			};
             workLoad.IgnorePatterns = textBoxIgnorePatterns.Text.SplitToList();
+            var settings = new CheckUrlsSettings();
+            PopulateSettingsWithFormValues(settings);
+            workLoad.Settings = settings;
 
-			return workLoad;
+
+            return workLoad;
 		}
 
         #region BackgroundWorkerUrlCheck
@@ -87,7 +91,7 @@ namespace CheckRequestedUrls
             backgroundWorkerUrlCheck.ReportProgress(-1, workLoad.Urls.Count);
 
             var pageLinks = new List<CheckUrlResult>();
-            var newSiteUri = new Uri(workLoad.NewSiteDomain);
+            //var newSiteUri = new Uri(workLoad.NewSiteDomain);
 
             var handledUrlList = new List<string>();
 
@@ -275,7 +279,7 @@ namespace CheckRequestedUrls
             var sb301 = new StringBuilder();
             foreach (var item in listOf301Response)
             {
-                sb.AppendLine(item.Url + " => " + item.Description);
+                sb.AppendLine(item.Url + " => " + item.Redirect);
                 sb301.AppendLine(item.Url);
             }
 			if (listOf301Response.Any())
@@ -424,11 +428,16 @@ namespace CheckRequestedUrls
         {
             var workLoad = e.Argument as WorkLoad;
 
-            List<CsvSimpleUrl> values = File.ReadAllLines(workLoad.CsvFile)
-                                            .Skip(1)
-                                            .Select(v => CsvSimpleUrl.FromCsv(v))
-                                            .Distinct()
-                                            .ToList();
+            //List<CsvSimpleUrl> values = File.ReadAllLines(workLoad.CsvFile)
+            //                                .Skip(1)
+            //                                .Select(v => CsvSimpleUrl.FromCsv(v))
+            //                                .Distinct()
+            //                                .ToList();
+            List<CsvSimpleUrl> values = File.ReadAllLines(workLoad.Settings.CsvFilePath)
+                .Skip((workLoad.Settings.FirstRowContainsTitle ? 1 : 0))
+                .Select(v => CsvSimpleUrl.FromCsv(v, workLoad.Settings.CsvFileSeperator))
+                .Distinct()
+                .ToList();
 
             var urls = values.Select(x => x.Url).ToList();
 
@@ -531,6 +540,8 @@ namespace CheckRequestedUrls
 		private void PopulateFormWithSettingsValues(CheckUrlsSettings settings)
 		{
 			textBoxCsvFile.Text = settings.CsvFilePath;
+            checkBoxFirstRowContainsTitle.Checked = settings.FirstRowContainsTitle;
+            textBoxCsvFileSeperator.Text = settings.CsvFileSeperator;
 			textBoxIgnorePatterns.Text = settings.IgnorePatterns;
 			textBoxSearchUrl.Text = settings.SearchUrl;
 			checkBoxOverVpn.Checked = settings.RunningOverVpn;
@@ -545,7 +556,9 @@ namespace CheckRequestedUrls
 		private void PopulateSettingsWithFormValues(CheckUrlsSettings settings)
 		{
 			settings.CsvFilePath = textBoxCsvFile.Text;
-			settings.IgnorePatterns = textBoxIgnorePatterns.Text;
+            settings.FirstRowContainsTitle = checkBoxFirstRowContainsTitle.Checked;
+            settings.CsvFileSeperator = textBoxCsvFileSeperator.Text;
+            settings.IgnorePatterns = textBoxIgnorePatterns.Text;
 			settings.SearchUrl = textBoxSearchUrl.Text;
 			settings.RunningOverVpn = checkBoxOverVpn.Checked;
 			settings.IgnoreSearch = checkBoxIgnoreSearch.Checked;

@@ -16,15 +16,18 @@ namespace Spider.Extensions
         public static List<string> SplitToList(this string data)
         {
             var list = new List<string>();
-            var patterns = data.Split('\n');
-            foreach (var pattern in patterns)
+            if (!string.IsNullOrEmpty(data))
             {
-                var patternValue = pattern;
-                if (patternValue.Contains("\r"))
+                var patterns = data.Split('\n');
+                foreach (var pattern in patterns)
                 {
-                    patternValue = patternValue.Replace("\r", "");
+                    var patternValue = pattern;
+                    if (patternValue.Contains("\r"))
+                    {
+                        patternValue = patternValue.Replace("\r", "");
+                    }
+                    list.Add(patternValue);
                 }
-                list.Add(patternValue);
             }
 
             return list;

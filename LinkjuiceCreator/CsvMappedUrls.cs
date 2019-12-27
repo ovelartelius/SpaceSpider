@@ -13,9 +13,9 @@ namespace LinkjuiceCreator
         public int PageId { get; set; }
         public string ErrorMessage { get; set; }
 
-        public static CsvMappedUrls FromCsv(string csvLine, string seperator = ",")
+        public static CsvMappedUrls FromCsv(string csvLine, string separator = ",")
         {
-            string[] values = csvLine.Split(char.Parse(seperator));
+            string[] values = csvLine.Split(char.Parse(separator));
             var item = new CsvMappedUrls();
             item.SourceUrl = Convert.ToString(values[0]);
             item.DestinationUrl = Convert.ToString(values[1]);
