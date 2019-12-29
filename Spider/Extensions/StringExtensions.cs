@@ -49,5 +49,25 @@ namespace Spider.Extensions
 
             return newUrl;
         }
+
+        public static bool MatchAnyPattern(this string checkIfMatch, List<string> patterns)
+        {
+            var isMatch = false;
+
+            if (patterns != null)
+            {
+                foreach (var pattern in patterns)
+                {
+                    if (Regex.IsMatch(checkIfMatch, pattern))
+                    {
+                        Console.WriteLine($"Ignore URL {checkIfMatch} for pattern {pattern}");
+                        isMatch = true;
+                        break;
+                    }
+                }
+            }
+
+            return isMatch;
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Net;
 
@@ -10,6 +11,9 @@ namespace Spider.Models
         public CheckUrlResult()
         {
             Headers = new NameValueCollection();
+            HeaderData = new Dictionary<string, string>();
+            IgnoredLinks = new List<string>();
+            DestinationUrls = new List<string>();
         }
 
         public string Url { get; set; }
@@ -33,7 +37,7 @@ namespace Spider.Models
             }
         }
 
-        public string StatusCodeJson { get; set; }
+        //public string StatusCodeJson { get; set; }
 
         public HttpStatusCode StatusCode { get; set; }
 
@@ -45,6 +49,8 @@ namespace Spider.Models
 
         [JsonIgnore]
         public NameValueCollection Headers { get; set; }
+
+        public Dictionary<string, string> HeaderData { get; set; }
 
         public string Content { get; set; }
 
@@ -59,5 +65,13 @@ namespace Spider.Models
         public int HistoricHits { get; set; }
 
         public bool Ignored { get; set; }
+
+        public List<string> IgnoredLinks { get; set; }
+
+        public List<string> ErroneousLinks { get; set; }
+
+        public List<string> DestinationUrls { get; set; }
+
+        public List<string> ExternalUrls { get; set; }
     }
 }

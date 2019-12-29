@@ -47,9 +47,7 @@
             this.tabPageBasic = new System.Windows.Forms.TabPage();
             this.buttonOutputDirectory = new System.Windows.Forms.Button();
             this.buttonLoadCsv = new System.Windows.Forms.Button();
-            this.textBoxIgnoreLinksPatterns = new System.Windows.Forms.TextBox();
             this.buttonStartWork = new System.Windows.Forms.Button();
-            this.labelIgnoreLinksRegExPatterns = new System.Windows.Forms.Label();
             this.checkBoxCheckDomainBeforeStart = new System.Windows.Forms.CheckBox();
             this.labelCsvFile = new System.Windows.Forms.Label();
             this.textBoxOutputDirectory = new System.Windows.Forms.TextBox();
@@ -58,19 +56,26 @@
             this.labelNewSiteDomain = new System.Windows.Forms.Label();
             this.textBoxNewSiteDomain = new System.Windows.Forms.TextBox();
             this.tabPageUserAgent = new System.Windows.Forms.TabPage();
+            this.tabPageIgnore = new System.Windows.Forms.TabPage();
+            this.textBoxIgnoreExternalHostsRegExPatterns = new System.Windows.Forms.TextBox();
+            this.labelIgnoreExternalHostsRegExPatterns = new System.Windows.Forms.Label();
+            this.textBoxIgnoreLinksPatterns = new System.Windows.Forms.TextBox();
+            this.labelIgnoreLinksRegExPatterns = new System.Windows.Forms.Label();
             this.tabPageAdvance = new System.Windows.Forms.TabPage();
             this.checkBoxOverVpn = new System.Windows.Forms.CheckBox();
             this.labelProxy = new System.Windows.Forms.Label();
             this.textBoxProxy = new System.Windows.Forms.TextBox();
-            this.tabPageIgnore = new System.Windows.Forms.TabPage();
-            this.labelIgnoreExternalHostsRegExPatterns = new System.Windows.Forms.Label();
-            this.textBoxIgnoreExternalHostsRegExPatterns = new System.Windows.Forms.TextBox();
+            this.backgroundWorkerMaster = new System.ComponentModel.BackgroundWorker();
+            this.backgroundWorkerGetUrl = new System.ComponentModel.BackgroundWorker();
+            this.backgroundWorkerAnchorParsePage = new System.ComponentModel.BackgroundWorker();
+            this.progressBarGetUrls = new System.Windows.Forms.ProgressBar();
+            this.progressBarParsePages = new System.Windows.Forms.ProgressBar();
             this.menuStrip1.SuspendLayout();
             this.tabControlSettings.SuspendLayout();
             this.tabPageBasic.SuspendLayout();
             this.tabPageUserAgent.SuspendLayout();
-            this.tabPageAdvance.SuspendLayout();
             this.tabPageIgnore.SuspendLayout();
+            this.tabPageAdvance.SuspendLayout();
             this.SuspendLayout();
             // 
             // textBoxUrl
@@ -158,7 +163,7 @@
             // textBoxResult
             // 
             this.textBoxResult.Location = new System.Drawing.Point(1008, 42);
-            this.textBoxResult.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.textBoxResult.Margin = new System.Windows.Forms.Padding(4);
             this.textBoxResult.Multiline = true;
             this.textBoxResult.Name = "textBoxResult";
             this.textBoxResult.Size = new System.Drawing.Size(517, 419);
@@ -167,7 +172,7 @@
             // buttonIndexDirectory
             // 
             this.buttonIndexDirectory.Location = new System.Drawing.Point(483, 160);
-            this.buttonIndexDirectory.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.buttonIndexDirectory.Margin = new System.Windows.Forms.Padding(4);
             this.buttonIndexDirectory.Name = "buttonIndexDirectory";
             this.buttonIndexDirectory.Size = new System.Drawing.Size(45, 26);
             this.buttonIndexDirectory.TabIndex = 20;
@@ -178,7 +183,7 @@
             // textBoxIndexDirectory
             // 
             this.textBoxIndexDirectory.Location = new System.Drawing.Point(15, 161);
-            this.textBoxIndexDirectory.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.textBoxIndexDirectory.Margin = new System.Windows.Forms.Padding(4);
             this.textBoxIndexDirectory.Name = "textBoxIndexDirectory";
             this.textBoxIndexDirectory.Size = new System.Drawing.Size(460, 22);
             this.textBoxIndexDirectory.TabIndex = 19;
@@ -200,7 +205,7 @@
             this.tabControlSettings.Controls.Add(this.tabPageIgnore);
             this.tabControlSettings.Controls.Add(this.tabPageAdvance);
             this.tabControlSettings.Location = new System.Drawing.Point(16, 33);
-            this.tabControlSettings.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabControlSettings.Margin = new System.Windows.Forms.Padding(4);
             this.tabControlSettings.Name = "tabControlSettings";
             this.tabControlSettings.SelectedIndex = 0;
             this.tabControlSettings.Size = new System.Drawing.Size(627, 692);
@@ -224,9 +229,9 @@
             this.tabPageBasic.Controls.Add(this.labelNewSiteDomain);
             this.tabPageBasic.Controls.Add(this.textBoxNewSiteDomain);
             this.tabPageBasic.Location = new System.Drawing.Point(4, 25);
-            this.tabPageBasic.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabPageBasic.Margin = new System.Windows.Forms.Padding(4);
             this.tabPageBasic.Name = "tabPageBasic";
-            this.tabPageBasic.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabPageBasic.Padding = new System.Windows.Forms.Padding(4);
             this.tabPageBasic.Size = new System.Drawing.Size(619, 663);
             this.tabPageBasic.TabIndex = 0;
             this.tabPageBasic.Text = "Basic";
@@ -235,7 +240,7 @@
             // buttonOutputDirectory
             // 
             this.buttonOutputDirectory.Location = new System.Drawing.Point(563, 565);
-            this.buttonOutputDirectory.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.buttonOutputDirectory.Margin = new System.Windows.Forms.Padding(4);
             this.buttonOutputDirectory.Name = "buttonOutputDirectory";
             this.buttonOutputDirectory.Size = new System.Drawing.Size(45, 26);
             this.buttonOutputDirectory.TabIndex = 17;
@@ -245,28 +250,17 @@
             // buttonLoadCsv
             // 
             this.buttonLoadCsv.Location = new System.Drawing.Point(563, 30);
-            this.buttonLoadCsv.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.buttonLoadCsv.Margin = new System.Windows.Forms.Padding(4);
             this.buttonLoadCsv.Name = "buttonLoadCsv";
             this.buttonLoadCsv.Size = new System.Drawing.Size(45, 25);
             this.buttonLoadCsv.TabIndex = 16;
             this.buttonLoadCsv.Text = "...";
             this.buttonLoadCsv.UseVisualStyleBackColor = true;
             // 
-            // textBoxIgnoreLinksPatterns
-            // 
-            this.textBoxIgnoreLinksPatterns.Location = new System.Drawing.Point(14, 35);
-            this.textBoxIgnoreLinksPatterns.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.textBoxIgnoreLinksPatterns.Multiline = true;
-            this.textBoxIgnoreLinksPatterns.Name = "textBoxIgnoreLinksPatterns";
-            this.textBoxIgnoreLinksPatterns.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBoxIgnoreLinksPatterns.Size = new System.Drawing.Size(540, 133);
-            this.textBoxIgnoreLinksPatterns.TabIndex = 3;
-            this.textBoxIgnoreLinksPatterns.Text = "^#\r\n^{{\r\n^javascript:\r\n^mailto:\r\n^tel:\r\n^sms:\r\n^data:image\r\n^@Model\r\n^\\\\?";
-            // 
             // buttonStartWork
             // 
             this.buttonStartWork.Location = new System.Drawing.Point(444, 598);
-            this.buttonStartWork.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.buttonStartWork.Margin = new System.Windows.Forms.Padding(4);
             this.buttonStartWork.Name = "buttonStartWork";
             this.buttonStartWork.Size = new System.Drawing.Size(164, 54);
             this.buttonStartWork.TabIndex = 2;
@@ -274,23 +268,13 @@
             this.buttonStartWork.UseVisualStyleBackColor = true;
             this.buttonStartWork.Click += new System.EventHandler(this.buttonStartWork_Click);
             // 
-            // labelIgnoreLinksRegExPatterns
-            // 
-            this.labelIgnoreLinksRegExPatterns.AutoSize = true;
-            this.labelIgnoreLinksRegExPatterns.Location = new System.Drawing.Point(11, 14);
-            this.labelIgnoreLinksRegExPatterns.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.labelIgnoreLinksRegExPatterns.Name = "labelIgnoreLinksRegExPatterns";
-            this.labelIgnoreLinksRegExPatterns.Size = new System.Drawing.Size(190, 17);
-            this.labelIgnoreLinksRegExPatterns.TabIndex = 4;
-            this.labelIgnoreLinksRegExPatterns.Text = "Ignore Links RegEx patterns:";
-            // 
             // checkBoxCheckDomainBeforeStart
             // 
             this.checkBoxCheckDomainBeforeStart.AutoSize = true;
             this.checkBoxCheckDomainBeforeStart.Checked = true;
             this.checkBoxCheckDomainBeforeStart.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBoxCheckDomainBeforeStart.Location = new System.Drawing.Point(16, 518);
-            this.checkBoxCheckDomainBeforeStart.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.checkBoxCheckDomainBeforeStart.Margin = new System.Windows.Forms.Padding(4);
             this.checkBoxCheckDomainBeforeStart.Name = "checkBoxCheckDomainBeforeStart";
             this.checkBoxCheckDomainBeforeStart.Size = new System.Drawing.Size(226, 21);
             this.checkBoxCheckDomainBeforeStart.TabIndex = 15;
@@ -310,7 +294,7 @@
             // textBoxOutputDirectory
             // 
             this.textBoxOutputDirectory.Location = new System.Drawing.Point(12, 566);
-            this.textBoxOutputDirectory.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.textBoxOutputDirectory.Margin = new System.Windows.Forms.Padding(4);
             this.textBoxOutputDirectory.Name = "textBoxOutputDirectory";
             this.textBoxOutputDirectory.Size = new System.Drawing.Size(540, 22);
             this.textBoxOutputDirectory.TabIndex = 12;
@@ -318,7 +302,7 @@
             // textBoxCsvFile
             // 
             this.textBoxCsvFile.Location = new System.Drawing.Point(12, 30);
-            this.textBoxCsvFile.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.textBoxCsvFile.Margin = new System.Windows.Forms.Padding(4);
             this.textBoxCsvFile.Name = "textBoxCsvFile";
             this.textBoxCsvFile.Size = new System.Drawing.Size(540, 22);
             this.textBoxCsvFile.TabIndex = 0;
@@ -347,7 +331,7 @@
             // textBoxNewSiteDomain
             // 
             this.textBoxNewSiteDomain.Location = new System.Drawing.Point(12, 486);
-            this.textBoxNewSiteDomain.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.textBoxNewSiteDomain.Margin = new System.Windows.Forms.Padding(4);
             this.textBoxNewSiteDomain.Name = "textBoxNewSiteDomain";
             this.textBoxNewSiteDomain.Size = new System.Drawing.Size(540, 22);
             this.textBoxNewSiteDomain.TabIndex = 3;
@@ -358,12 +342,67 @@
             this.tabPageUserAgent.Controls.Add(this.textBoxUserAgent);
             this.tabPageUserAgent.Controls.Add(this.labelUserAgent);
             this.tabPageUserAgent.Location = new System.Drawing.Point(4, 25);
-            this.tabPageUserAgent.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabPageUserAgent.Margin = new System.Windows.Forms.Padding(4);
             this.tabPageUserAgent.Name = "tabPageUserAgent";
             this.tabPageUserAgent.Size = new System.Drawing.Size(619, 663);
             this.tabPageUserAgent.TabIndex = 3;
             this.tabPageUserAgent.Text = "UserAgent";
             this.tabPageUserAgent.UseVisualStyleBackColor = true;
+            // 
+            // tabPageIgnore
+            // 
+            this.tabPageIgnore.Controls.Add(this.textBoxIgnoreExternalHostsRegExPatterns);
+            this.tabPageIgnore.Controls.Add(this.labelIgnoreExternalHostsRegExPatterns);
+            this.tabPageIgnore.Controls.Add(this.textBoxIgnoreLinksPatterns);
+            this.tabPageIgnore.Controls.Add(this.labelIgnoreLinksRegExPatterns);
+            this.tabPageIgnore.Location = new System.Drawing.Point(4, 25);
+            this.tabPageIgnore.Name = "tabPageIgnore";
+            this.tabPageIgnore.Size = new System.Drawing.Size(619, 663);
+            this.tabPageIgnore.TabIndex = 4;
+            this.tabPageIgnore.Text = "Ignore";
+            this.tabPageIgnore.UseVisualStyleBackColor = true;
+            // 
+            // textBoxIgnoreExternalHostsRegExPatterns
+            // 
+            this.textBoxIgnoreExternalHostsRegExPatterns.Location = new System.Drawing.Point(14, 219);
+            this.textBoxIgnoreExternalHostsRegExPatterns.Margin = new System.Windows.Forms.Padding(4);
+            this.textBoxIgnoreExternalHostsRegExPatterns.Multiline = true;
+            this.textBoxIgnoreExternalHostsRegExPatterns.Name = "textBoxIgnoreExternalHostsRegExPatterns";
+            this.textBoxIgnoreExternalHostsRegExPatterns.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.textBoxIgnoreExternalHostsRegExPatterns.Size = new System.Drawing.Size(540, 133);
+            this.textBoxIgnoreExternalHostsRegExPatterns.TabIndex = 6;
+            this.textBoxIgnoreExternalHostsRegExPatterns.Text = "^https:\\\\/\\\\/accounts.google.com\\\\/\r\n^http:\\\\/\\\\/www.facebook.com\\\\/\r\n";
+            // 
+            // labelIgnoreExternalHostsRegExPatterns
+            // 
+            this.labelIgnoreExternalHostsRegExPatterns.AutoSize = true;
+            this.labelIgnoreExternalHostsRegExPatterns.Location = new System.Drawing.Point(11, 197);
+            this.labelIgnoreExternalHostsRegExPatterns.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.labelIgnoreExternalHostsRegExPatterns.Name = "labelIgnoreExternalHostsRegExPatterns";
+            this.labelIgnoreExternalHostsRegExPatterns.Size = new System.Drawing.Size(248, 17);
+            this.labelIgnoreExternalHostsRegExPatterns.TabIndex = 5;
+            this.labelIgnoreExternalHostsRegExPatterns.Text = "Ignore External Hosts RegEx patterns:";
+            // 
+            // textBoxIgnoreLinksPatterns
+            // 
+            this.textBoxIgnoreLinksPatterns.Location = new System.Drawing.Point(14, 35);
+            this.textBoxIgnoreLinksPatterns.Margin = new System.Windows.Forms.Padding(4);
+            this.textBoxIgnoreLinksPatterns.Multiline = true;
+            this.textBoxIgnoreLinksPatterns.Name = "textBoxIgnoreLinksPatterns";
+            this.textBoxIgnoreLinksPatterns.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.textBoxIgnoreLinksPatterns.Size = new System.Drawing.Size(540, 133);
+            this.textBoxIgnoreLinksPatterns.TabIndex = 3;
+            this.textBoxIgnoreLinksPatterns.Text = "^#\r\n^{{\r\n^javascript:\r\n^mailto:\r\n^tel:\r\n^sms:\r\n^data:image\r\n^@Model\r\n^\\\\?";
+            // 
+            // labelIgnoreLinksRegExPatterns
+            // 
+            this.labelIgnoreLinksRegExPatterns.AutoSize = true;
+            this.labelIgnoreLinksRegExPatterns.Location = new System.Drawing.Point(11, 14);
+            this.labelIgnoreLinksRegExPatterns.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.labelIgnoreLinksRegExPatterns.Name = "labelIgnoreLinksRegExPatterns";
+            this.labelIgnoreLinksRegExPatterns.Size = new System.Drawing.Size(190, 17);
+            this.labelIgnoreLinksRegExPatterns.TabIndex = 4;
+            this.labelIgnoreLinksRegExPatterns.Text = "Ignore Links RegEx patterns:";
             // 
             // tabPageAdvance
             // 
@@ -371,7 +410,7 @@
             this.tabPageAdvance.Controls.Add(this.labelProxy);
             this.tabPageAdvance.Controls.Add(this.textBoxProxy);
             this.tabPageAdvance.Location = new System.Drawing.Point(4, 25);
-            this.tabPageAdvance.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabPageAdvance.Margin = new System.Windows.Forms.Padding(4);
             this.tabPageAdvance.Name = "tabPageAdvance";
             this.tabPageAdvance.Size = new System.Drawing.Size(619, 663);
             this.tabPageAdvance.TabIndex = 2;
@@ -382,7 +421,7 @@
             // 
             this.checkBoxOverVpn.AutoSize = true;
             this.checkBoxOverVpn.Location = new System.Drawing.Point(16, 23);
-            this.checkBoxOverVpn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.checkBoxOverVpn.Margin = new System.Windows.Forms.Padding(4);
             this.checkBoxOverVpn.Name = "checkBoxOverVpn";
             this.checkBoxOverVpn.Size = new System.Drawing.Size(147, 21);
             this.checkBoxOverVpn.TabIndex = 13;
@@ -402,50 +441,48 @@
             // textBoxProxy
             // 
             this.textBoxProxy.Location = new System.Drawing.Point(16, 70);
-            this.textBoxProxy.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.textBoxProxy.Margin = new System.Windows.Forms.Padding(4);
             this.textBoxProxy.Name = "textBoxProxy";
             this.textBoxProxy.Size = new System.Drawing.Size(329, 22);
             this.textBoxProxy.TabIndex = 6;
             // 
-            // tabPageIgnore
+            // backgroundWorkerMaster
             // 
-            this.tabPageIgnore.Controls.Add(this.textBoxIgnoreExternalHostsRegExPatterns);
-            this.tabPageIgnore.Controls.Add(this.labelIgnoreExternalHostsRegExPatterns);
-            this.tabPageIgnore.Controls.Add(this.textBoxIgnoreLinksPatterns);
-            this.tabPageIgnore.Controls.Add(this.labelIgnoreLinksRegExPatterns);
-            this.tabPageIgnore.Location = new System.Drawing.Point(4, 25);
-            this.tabPageIgnore.Name = "tabPageIgnore";
-            this.tabPageIgnore.Size = new System.Drawing.Size(619, 663);
-            this.tabPageIgnore.TabIndex = 4;
-            this.tabPageIgnore.Text = "Ignore";
-            this.tabPageIgnore.UseVisualStyleBackColor = true;
+            this.backgroundWorkerMaster.WorkerReportsProgress = true;
+            this.backgroundWorkerMaster.WorkerSupportsCancellation = true;
+            this.backgroundWorkerMaster.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorkerMaster_DoWork);
+            this.backgroundWorkerMaster.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.backgroundWorkerMaster_ProgressChanged);
+            this.backgroundWorkerMaster.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorkerMaster_RunWorkerCompleted);
             // 
-            // labelIgnoreExternalHostsRegExPatterns
+            // backgroundWorkerGetUrl
             // 
-            this.labelIgnoreExternalHostsRegExPatterns.AutoSize = true;
-            this.labelIgnoreExternalHostsRegExPatterns.Location = new System.Drawing.Point(11, 197);
-            this.labelIgnoreExternalHostsRegExPatterns.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.labelIgnoreExternalHostsRegExPatterns.Name = "labelIgnoreExternalHostsRegExPatterns";
-            this.labelIgnoreExternalHostsRegExPatterns.Size = new System.Drawing.Size(248, 17);
-            this.labelIgnoreExternalHostsRegExPatterns.TabIndex = 5;
-            this.labelIgnoreExternalHostsRegExPatterns.Text = "Ignore External Hosts RegEx patterns:";
+            this.backgroundWorkerGetUrl.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorkerGetUrl_DoWork);
             // 
-            // textBoxIgnoreExternalHostsRegExPatterns
+            // backgroundWorkerAnchorParsePage
             // 
-            this.textBoxIgnoreExternalHostsRegExPatterns.Location = new System.Drawing.Point(14, 219);
-            this.textBoxIgnoreExternalHostsRegExPatterns.Margin = new System.Windows.Forms.Padding(4);
-            this.textBoxIgnoreExternalHostsRegExPatterns.Multiline = true;
-            this.textBoxIgnoreExternalHostsRegExPatterns.Name = "textBoxIgnoreExternalHostsRegExPatterns";
-            this.textBoxIgnoreExternalHostsRegExPatterns.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBoxIgnoreExternalHostsRegExPatterns.Size = new System.Drawing.Size(540, 133);
-            this.textBoxIgnoreExternalHostsRegExPatterns.TabIndex = 6;
-            this.textBoxIgnoreExternalHostsRegExPatterns.Text = "^https:\\\\/\\\\/accounts.google.com\\\\/\r\n^http:\\\\/\\\\/www.facebook.com\\\\/\r\n";
+            this.backgroundWorkerAnchorParsePage.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorkerAnchorParsePage_DoWork);
+            // 
+            // progressBarGetUrls
+            // 
+            this.progressBarGetUrls.Location = new System.Drawing.Point(902, 517);
+            this.progressBarGetUrls.Name = "progressBarGetUrls";
+            this.progressBarGetUrls.Size = new System.Drawing.Size(342, 23);
+            this.progressBarGetUrls.TabIndex = 22;
+            // 
+            // progressBarParsePages
+            // 
+            this.progressBarParsePages.Location = new System.Drawing.Point(902, 555);
+            this.progressBarParsePages.Name = "progressBarParsePages";
+            this.progressBarParsePages.Size = new System.Drawing.Size(342, 23);
+            this.progressBarParsePages.TabIndex = 23;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1585, 767);
+            this.Controls.Add(this.progressBarParsePages);
+            this.Controls.Add(this.progressBarGetUrls);
             this.Controls.Add(this.tabControlSettings);
             this.Controls.Add(this.textBoxResult);
             this.Controls.Add(this.menuStrip1);
@@ -460,10 +497,10 @@
             this.tabPageBasic.PerformLayout();
             this.tabPageUserAgent.ResumeLayout(false);
             this.tabPageUserAgent.PerformLayout();
-            this.tabPageAdvance.ResumeLayout(false);
-            this.tabPageAdvance.PerformLayout();
             this.tabPageIgnore.ResumeLayout(false);
             this.tabPageIgnore.PerformLayout();
+            this.tabPageAdvance.ResumeLayout(false);
+            this.tabPageAdvance.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -507,6 +544,11 @@
         private System.Windows.Forms.TabPage tabPageIgnore;
         private System.Windows.Forms.TextBox textBoxIgnoreExternalHostsRegExPatterns;
         private System.Windows.Forms.Label labelIgnoreExternalHostsRegExPatterns;
+        private System.ComponentModel.BackgroundWorker backgroundWorkerMaster;
+        private System.ComponentModel.BackgroundWorker backgroundWorkerGetUrl;
+        private System.ComponentModel.BackgroundWorker backgroundWorkerAnchorParsePage;
+        private System.Windows.Forms.ProgressBar progressBarGetUrls;
+        private System.Windows.Forms.ProgressBar progressBarParsePages;
     }
 }
 

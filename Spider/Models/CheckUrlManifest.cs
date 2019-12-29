@@ -12,11 +12,17 @@ namespace Spider.Models
         }
 
         public string Url { get; set; }
+
         public List<string> SourceUrls { get; set; }
+        
         public string UserAgent { get; set; }
+        
         public string ProxyAddress { get; set; }
 
         public List<string> ContentTypesToDownload { get; set; }
+
+        // The folder where the index will be stored.
+        public string IndexFolder { get; set; }
 
         public bool UseUserAgent
         {

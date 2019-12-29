@@ -6,9 +6,17 @@ namespace Crawler.Models
 {
     public class CrawlerSettings : ISettings
     {
+        public CrawlerSettings()
+        {
+            AnchorRegexPattern = "<a[^>]*href=\"([^\"]*)\"[^>]*>.*<\\/a>";
+            ErroneousLinkPatternsList = new List<string>();
+            ErroneousLinkPatternsList.Add("^~/.*");
+        }
+
         public string SettingsType => this.ToString();
 
         public string Url { get; set; }
+
         public string IndexFolder { get; set; }
 
         public string UserAgent { get; set; }
@@ -20,5 +28,11 @@ namespace Crawler.Models
         public string IgnoreExternalHostsPatterns { get; set; }
         [JsonIgnore]
         public List<string> IgnoreExternalHostsPatternsList { get; set; }
+
+        public string AnchorRegexPattern { get; set; }
+
+        [JsonIgnore]
+        public List<string> ErroneousLinkPatternsList { get; set; }
+
     }
 }

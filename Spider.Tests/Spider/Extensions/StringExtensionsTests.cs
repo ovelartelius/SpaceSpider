@@ -145,5 +145,51 @@ namespace Spider.Tests.Spider.Extensions
             public string Uri { get; set; }
             public string Result { get; set; }
         }
+
+        [TestMethod]
+        public void MatchAnyPattern_EmptyPatternList_NoMatch()
+        {
+            //Arrange
+            var stringToMatch = "http://oldcrapsite.com/my%20page";
+            var patterns = new List<string>();
+
+            //Act
+            var result = stringToMatch.MatchAnyPattern(patterns);
+
+            //Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public void MatchAnyPattern_2InPatternList_NoMatch()
+        {
+            //Arrange
+            var stringToMatch = "http://oldcrapsite.com/my%20page";
+            var patterns = new List<string>();
+            patterns.Add("^javascript:.\\w");
+            patterns.Add("^mailto:.\\w");
+
+            //Act
+            var result = stringToMatch.MatchAnyPattern(patterns);
+
+            //Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public void MatchAnyPattern_2InPatternList_Match()
+        {
+            //Arrange
+            var stringToMatch = "mailto:ove_lartelius@hotmail.com";
+            var patterns = new List<string>();
+            patterns.Add("^javascript:.\\w");
+            patterns.Add("^mailto:.\\w");
+
+            //Act
+            var result = stringToMatch.MatchAnyPattern(patterns);
+
+            //Assert
+            Assert.IsTrue(result);
+        }
     }
 }

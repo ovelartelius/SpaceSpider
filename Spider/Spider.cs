@@ -201,6 +201,7 @@ namespace Spider
                 for (int i = 0; i < webResponse.Headers.Count; ++i)
                 {
                     checkUrlResult.Headers.Add(webResponse.Headers.Keys[i], webResponse.Headers[i]);
+                    checkUrlResult.HeaderData.Add(webResponse.Headers.Keys[i], webResponse.Headers[i]);
                 }
 
                 // Get more information from the response.

@@ -34,5 +34,22 @@ namespace Spider
 
             return result;
         }
+
+        public static T LoadJson<T>(string fileUri)
+        {
+            var jsonObject = default(T);
+
+            try
+            {
+                jsonObject = JsonConvert.DeserializeObject<T>(File.ReadAllText(fileUri));
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+
+            return jsonObject;
+        }
     }
 }

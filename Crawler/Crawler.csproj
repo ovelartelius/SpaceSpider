@@ -56,6 +56,8 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Models\AnchorParsePageManifest.cs" />
+    <Compile Include="Models\CrawlerProcessStatus.cs" />
     <Compile Include="Models\CrawlerSettings.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
