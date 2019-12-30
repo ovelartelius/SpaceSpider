@@ -33,5 +33,7 @@ namespace Spider.Models
         {
             get { return !string.IsNullOrEmpty(ProxyAddress); }
         }
+
+        public CheckUrlResult CheckUrlResult { get; set; }
     }
 }

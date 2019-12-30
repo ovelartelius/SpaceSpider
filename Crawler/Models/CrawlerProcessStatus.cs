@@ -11,5 +11,9 @@
         public int MaxPagesParsed { get; set; }
 
         public int NoPagesParsed { get; set; }
+
+        //public string LatestCheckUrl { get; set; }
+
+        //public string LatestAnchorParsedPage { get; set; }
     }
 }

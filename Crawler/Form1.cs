@@ -6,7 +6,9 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Windows.Forms;
+using Crawler.Data;
 using Crawler.Models;
 using Spider;
 using Spider.Extensions;
@@ -58,6 +60,7 @@ namespace Crawler
 		{
             textBoxUrl.Text = settings.Url;
             textBoxIndexDirectory.Text = settings.IndexFolder;
+            textBoxTimeoutInMs.Text = settings.TimeoutInMs.ToString();
 
             textBoxUserAgent.Text = settings.UserAgent;
 
@@ -70,6 +73,7 @@ namespace Crawler
 		{
 			settings.Url = textBoxUrl.Text;
             settings.IndexFolder = textBoxIndexDirectory.Text;
+            settings.TimeoutInMs = Convert.ToInt32(textBoxTimeoutInMs.Text);
 
             settings.UserAgent = textBoxUserAgent.Text;
 
@@ -103,317 +107,189 @@ namespace Crawler
         private void buttonStartWork_Click(object sender, EventArgs e)
         {
             buttonStartWork.Enabled = false;
+            LogReset();
 
             var manifest = new CrawlerSettings();
             PopulateSettingsWithFormValues(manifest);
             manifest.IgnoreLinksPatternsList = textBoxIgnoreLinksPatterns.Text.SplitToList();
             manifest.IgnoreExternalHostsPatternsList = textBoxIgnoreExternalHostsRegExPatterns.Text.SplitToList();
 
+            var dateTimeString = DateTime.Now.ToString("yyyy-MM-ddTHHmm");
+            manifest.IndexFolder = manifest.IndexFolder + "\\" + dateTimeString;
 
             backgroundWorkerMaster.RunWorkerAsync(manifest);
 
         }
 
-        #region BackgroundWorkerGetUrl()
-        private void backgroundWorkerGetUrl_DoWork(object sender, DoWorkEventArgs e)
-        {
-            var checkUrlManifest = e.Argument as CheckUrlManifest;
+        
 
-            var spider = new Spider.Spider();
-            var checkUrlResult = spider.CheckUrl(checkUrlManifest);
+        //private bool IsIgnoredLink(string indexFolder, string link)
+        //{
+        //    var ignore = false;
+        //    var filePath = GetIgnoredLinksFilePath(indexFolder);
+        //    var ignoredUrls = Json.LoadJson<List<string>>(filePath);
+        //    if (ignoredUrls.Contains(link))
+        //    {
+        //        ignore = true;
+        //    }
+        //    return ignore;
+        //}
 
-            var filePath = GetCheckUrlResultFilePath(checkUrlManifest.IndexFolder, checkUrlResult);
-            Json.SaveAsFile<CheckUrlResult>(filePath, checkUrlResult);
+        //private string GetIgnoredLinksFilePath(string indexFolder)
+        //{
+        //    var filePath = $"{indexFolder}\\_ignoredlinks.json";
+        //    return filePath;
+        //}
 
-            AddNotAnchorParsedPage(checkUrlManifest.IndexFolder, checkUrlResult);
-        }
-        #endregion
+        //private void InitIgnoredLinks(string indexFolder)
+        //{
+        //    var filePath = GetIgnoredLinksFilePath(indexFolder);
+        //    var ignoredLinks = new List<string>();
 
-        private bool ShouldLinkBeIgnored(AnchorParsePageManifest manifest, string link)
-        {
-            var ignore = false;
+        //    if (!Json.SaveAsFile(filePath, ignoredLinks))
+        //    {
+        //        Console.WriteLine($"Could not save {filePath}");
+        //    }
+        //}
 
-            if (IsIgnoredLink(manifest.IndexFolder, link))
-            {
-                ignore = true;
-            }
-            else if (link.MatchAnyPattern(manifest.IgnoreLinksPatternsList))
-            {
-                AddLinkToIgnoreLinks(manifest.IndexFolder, link);
-                ignore = true;
-            }
+        //private void AddLinkToIgnoreLinks(string indexFolder, string link)
+        //{
+        //    var filePath = GetIgnoredLinksFilePath(indexFolder);
+        //    var ignoredLinks = Json.LoadJson<List<string>>(filePath);
 
-            return ignore;
-        }
+        //    ignoredLinks.Add(link);
 
-        private bool IsIgnoredLink(string indexFolder, string link)
-        {
-            var ignore = false;
-            var filePath = GetIgnoredLinksFilePath(indexFolder);
-            var ignoredUrls = Json.LoadJson<List<string>>(filePath);
-            if (ignoredUrls.Contains(link))
-            {
-                ignore = true;
-            }
-            return ignore;
-        }
-
-        private string GetIgnoredLinksFilePath(string indexFolder)
-        {
-            var filePath = $"{indexFolder}\\_ignoredlinks.json";
-            return filePath;
-        }
-
-        private void InitIgnoredLinks(string indexFolder)
-        {
-            var filePath = GetIgnoredLinksFilePath(indexFolder);
-            var ignoredLinks = new List<string>();
-
-            if (!Json.SaveAsFile(filePath, ignoredLinks))
-            {
-                Console.WriteLine($"Could not save {filePath}");
-            }
-        }
-
-        private void AddLinkToIgnoreLinks(string indexFolder, string link)
-        {
-            var filePath = GetIgnoredLinksFilePath(indexFolder);
-            var ignoredLinks = Json.LoadJson<List<string>>(filePath);
-
-            ignoredLinks.Add(link);
-
-            if (!Json.SaveAsFile(filePath, ignoredLinks))
-            {
-                Console.WriteLine($"Could not save {filePath}");
-            }
-        }
+        //    if (!Json.SaveAsFile(filePath, ignoredLinks))
+        //    {
+        //        Console.WriteLine($"Could not save {filePath}");
+        //    }
+        //}
 
 
-        #region BackgroundWorkerAnchorParsePage()
-        private void backgroundWorkerAnchorParsePage_DoWork(object sender, DoWorkEventArgs e)
-        {
-            var anchorParsePageManifest = e.Argument as AnchorParsePageManifest;
-
-            anchorParsePageManifest.CheckUrlResult = Json.LoadJson<CheckUrlResult>(anchorParsePageManifest.FileToParse);
-
-            if (!string.IsNullOrEmpty(anchorParsePageManifest.CheckUrlResult.Content))
-            {
-                var matches = Regex.Matches(anchorParsePageManifest.CheckUrlResult.Content, anchorParsePageManifest.AnchorRegexPattern, RegexOptions.IgnoreCase);
-
-                foreach (Match match in matches)
-                {
-                    var link = match.Groups[1].ToString();
-
-                    // Check if the link matching any ignore pattern.
-                    if (ShouldLinkBeIgnored(anchorParsePageManifest, link))
-                    {
-                        Console.WriteLine($"Ignored URL {link}.");
-                        anchorParsePageManifest.CheckUrlResult.IgnoredLinks.Add(link);
-                        link = string.Empty;
-                    }
-
-                    // Check if the link startswith "~/link/".
-                    if (link.MatchAnyPattern(anchorParsePageManifest.ErroneousLinkPatternsList))
-                    {
-                        anchorParsePageManifest.CheckUrlResult.ErroneousLinks.Add(link);
-                        // Clear the link so that we stop handle the page.
-                        link = string.Empty;
-                    }
 
 
-                    if (link.StartsWith("/"))
-                    {
-                        // We need to add the host for the link.
-                        link = $"{anchorParsePageManifest.CheckUrlResult.Uri.Scheme}://{anchorParsePageManifest.CheckUrlResult.Uri.Host}{link}";
-                    }
+        //private string GetCheckUrlResultFilePath(string indexFolder, CheckUrlResult checkUrlResult)
+        //{
+        //    var filePath = $"{indexFolder}\\{checkUrlResult.Uri.AbsoluteUri.ToFileSafeName()}.json";
+        //    return filePath;
+        //}
 
-                    //// We need to make sure that we stay on the same host.
-                    //if (!string.IsNullOrEmpty(link) && !link.StartsWith("?") && !link.StartsWith(string.Format("{0}://{1}", workingPage.Uri.Scheme, workingPage.Uri.Host)))
-                    //{
-                    //    var cachedPageLink = Cache.FirstOrDefault(x => x.Url == link);
-                    //    if (cachedPageLink == null)
-                    //    {
-                    //        //var urlCheckResult = new UrlCheckResult();
-                    //        //try
-                    //        //{
-                    //        //	var linkUri = new Uri(link);
-                    //        //	urlCheckResult = CheckUrl(linkUri);
-                    //        //}
-                    //        //catch (UriFormatException uriEx)
-                    //        //{
-                    //        //	urlCheckResult.StatusCode = HttpStatusCode.BadRequest;
-                    //        //}
-                    //        //catch (NotSupportedException notEx)
-                    //        //{
-                    //        //	urlCheckResult.StatusCode = HttpStatusCode.BadRequest;
-                    //        //}
+        //private string GetNotAnchorParsedPagesFilePath(string indexFolder)
+        //{
+        //    var filePath = $"{indexFolder}\\_notanchorparsedpages.json";
+        //    return filePath;
+        //}
 
-                    //        ////if (urlCheckResult.StatusCode != HttpStatusCode.BadRequest)
-                    //        ////{
-                    //        ////	urlCheckResult = CheckUrl(new Uri(linkUri));
-                    //        ////}
+        //private void InitNotAnchorParsedPage(string indexFolder)
+        //{
+        //    var filePath = GetNotAnchorParsedPagesFilePath(indexFolder);
+        //    var notParsedPages = new List<string>();
 
-                    //        //var pageLink = new WorkingPageLink { Url = link, StatusCode = urlCheckResult.StatusCode };
-                    //        //workingPage.DestinationUrls.Add(pageLink);
-                    //        //Cache.Add(pageLink);
-                    //    }
-                    //    else
-                    //    {
-                    //        workingPage.DestinationUrls.Add(cachedPageLink);
-                    //    }
-                    //    link = string.Empty;
-                    //}
+        //    if (!Json.SaveAsFile(filePath, notParsedPages))
+        //    {
+        //        Console.WriteLine($"Could not save {filePath}");
+        //    }
+        //}
 
+        //private void AddNotAnchorParsedPage(string indexFolder, CheckUrlResult checkUrlResult)
+        //{
+        //    var filePath = GetNotAnchorParsedPagesFilePath(indexFolder);
+        //    var notParsedPages = Json.LoadJson<List<string>>(filePath);
 
-                    if (!string.IsNullOrEmpty(link))
-                    {
-                        if (link.StartsWith("?"))
-                        {
-                            //link = string.Format("{0}{1}", workingPage.Uri.AbsoluteUri, link);
-                            link = $"{anchorParsePageManifest.CheckUrlResult.Uri.AbsoluteUri}{link}";
-                        }
+        //    var pageFilePath = GetCheckUrlResultFilePath(indexFolder, checkUrlResult);
+        //    notParsedPages.Add(pageFilePath);
 
-                        var uri = anchorParsePageManifest.CheckUrlResult.Uri;
+        //    if (Json.SaveAsFile(filePath, notParsedPages))
+        //    {
+        //        Console.WriteLine($"Added {checkUrlResult.Url} to {filePath}");
+        //    }
+        //    else
+        //    {
+        //        Console.WriteLine($"Could not save {filePath}. Stop trying.");
+        //    }
+        //}
 
-                        if (!link.StartsWith($"{uri.Scheme}://{uri.Host}"))
-                        {
-                            // External link
-                            anchorParsePageManifest.CheckUrlResult.ExternalUrls.Add(link);
-                        }
-                        else
-                        {
-                            anchorParsePageManifest.CheckUrlResult.DestinationUrls.Add(link);
-                            AddNotCrawledUrl(anchorParsePageManifest.IndexFolder, link);
-                        }
-                    }
+        //private string CheckOutNotAnchorParsedPage(string indexFolder)
+        //{
+        //    var filePath = GetNotAnchorParsedPagesFilePath(indexFolder);
+        //    var notParsedPages = Json.LoadJson<List<string>>(filePath);
+        //    var uri = string.Empty;
+        //    if (notParsedPages != null && notParsedPages.Any())
+        //    {
+        //        uri = notParsedPages[0];
+        //    }
 
-                }
+        //    return uri;
+        //}
 
-                var filePath = GetCheckUrlResultFilePath(anchorParsePageManifest.IndexFolder, anchorParsePageManifest.CheckUrlResult);
-                Json.SaveAsFile<CheckUrlResult>(filePath, anchorParsePageManifest.CheckUrlResult);
-            }
-            
-        }
-        #endregion
+        //private void RemoveNotAnchorParsedPage(string indexFolder, string uri)
+        //{
+        //    var filePath = GetNotAnchorParsedPagesFilePath(indexFolder);
+        //    var notParsedPages = Json.LoadJson<List<string>>(filePath);
 
-        private string GetCheckUrlResultFilePath(string indexFolder, CheckUrlResult checkUrlResult)
-        {
-            var filePath = $"{indexFolder}\\{checkUrlResult.Uri.AbsoluteUri.ToFileSafeName()}.json";
-            return filePath;
-        }
+        //    notParsedPages.Remove(uri);
 
-        private string GetNotAnchorParsedPagesFilePath(string indexFolder)
-        {
-            var filePath = $"{indexFolder}\\_notanchorparsedpages.json";
-            return filePath;
-        }
+        //    if (!Json.SaveAsFile(filePath, notParsedPages))
+        //    {
+        //        Console.WriteLine($"Could not save {filePath}");
+        //    }
+        //}
 
-        private void InitNotAnchorParsedPage(string indexFolder)
-        {
-            var filePath = GetNotAnchorParsedPagesFilePath(indexFolder);
-            var notParsedPages = new List<string>();
+        //private string GetNotCrawledUrlsFilePath(string indexFolder)
+        //{
+        //    var filePath = $"{indexFolder}\\_notcrawledurls.json";
+        //    return filePath;
+        //}
 
-            if (!Json.SaveAsFile(filePath, notParsedPages))
-            {
-                Console.WriteLine($"Could not save {filePath}");
-            }
-        }
+        //private void InitNotCrawledUrl(string indexFolder)
+        //{
+        //    var filePath = GetNotCrawledUrlsFilePath(indexFolder);
+        //    var notCrawledUrls = new List<string>();
 
-        private void AddNotAnchorParsedPage(string indexFolder, CheckUrlResult checkUrlResult)
-        {
-            var filePath = GetNotAnchorParsedPagesFilePath(indexFolder);
-            var notParsedPages = Json.LoadJson<List<string>>(filePath);
+        //    if (!Json.SaveAsFile(filePath, notCrawledUrls))
+        //    {
+        //        Console.WriteLine($"Could not save {filePath}");
+        //    }
+        //}
 
-            var pageFilePath = GetCheckUrlResultFilePath(indexFolder, checkUrlResult);
-            notParsedPages.Add(pageFilePath);
+        //private void AddNotCrawledUrl(string indexFolder, string url)
+        //{
+        //    var filePath = GetNotCrawledUrlsFilePath(indexFolder);
+        //    var notCrawledUrls = Json.LoadJson<List<string>>(filePath);
 
-            if (!Json.SaveAsFile(filePath, notParsedPages))
-            {
-                Console.WriteLine($"Could not save {filePath}");
-            }
-        }
+        //    notCrawledUrls.Add(url);
 
-        private string CheckOutNotAnchorParsedPage(string indexFolder)
-        {
-            var filePath = GetNotAnchorParsedPagesFilePath(indexFolder);
-            var notParsedPages = Json.LoadJson<List<string>>(filePath);
-            var uri = string.Empty;
-            if (notParsedPages != null && notParsedPages.Any())
-            {
-                uri = notParsedPages[0];
-            }
+        //    if (!Json.SaveAsFile(filePath, notCrawledUrls))
+        //    {
+        //        Console.WriteLine($"Could not save {filePath}");
+        //    }
+        //}
 
-            return uri;
-        }
+        //private string CheckOutNotCrawledUrl(string indexFolder)
+        //{
+        //    var filePath = GetNotCrawledUrlsFilePath(indexFolder);
+        //    var notCrawledUrls = Json.LoadJson<List<string>>(filePath);
+        //    var url = string.Empty;
+        //    if (notCrawledUrls != null && notCrawledUrls.Any())
+        //    {
+        //        url = notCrawledUrls[0];
+        //    }
 
-        private void RemoveNotAnchorParsedPage(string indexFolder, string uri)
-        {
-            var filePath = GetNotAnchorParsedPagesFilePath(indexFolder);
-            var notParsedPages = Json.LoadJson<List<string>>(filePath);
+        //    return url;
+        //}
 
-            notParsedPages.Remove(uri);
+        //private void RemoveNotCrawledUrl(string indexFolder, string url)
+        //{
+        //    var filePath = GetNotCrawledUrlsFilePath(indexFolder);
+        //    var notCrawledUrls = Json.LoadJson<List<string>>(filePath);
 
-            if (!Json.SaveAsFile(filePath, notParsedPages))
-            {
-                Console.WriteLine($"Could not save {filePath}");
-            }
-        }
+        //    notCrawledUrls.Remove(url);
 
-        private string GetNotCrawledUrlsFilePath(string indexFolder)
-        {
-            var filePath = $"{indexFolder}\\_notcrawledurls.json";
-            return filePath;
-        }
-
-        private void InitNotCrawledUrl(string indexFolder)
-        {
-            var filePath = GetNotCrawledUrlsFilePath(indexFolder);
-            var notCrawledUrls = new List<string>();
-
-            if (!Json.SaveAsFile(filePath, notCrawledUrls))
-            {
-                Console.WriteLine($"Could not save {filePath}");
-            }
-        }
-
-        private void AddNotCrawledUrl(string indexFolder, string url)
-        {
-            var filePath = GetNotCrawledUrlsFilePath(indexFolder);
-            var notCrawledUrls = Json.LoadJson<List<string>>(filePath);
-
-            notCrawledUrls.Add(url);
-
-            if (!Json.SaveAsFile(filePath, notCrawledUrls))
-            {
-                Console.WriteLine($"Could not save {filePath}");
-            }
-        }
-
-        private string CheckOutNotCrawledUrl(string indexFolder)
-        {
-            var filePath = GetNotCrawledUrlsFilePath(indexFolder);
-            var notCrawledUrls = Json.LoadJson<List<string>>(filePath);
-            var url = string.Empty;
-            if (notCrawledUrls != null && notCrawledUrls.Any())
-            {
-                url = notCrawledUrls[0];
-            }
-
-            return url;
-        }
-
-        private void RemoveNotCrawledUrl(string indexFolder, string url)
-        {
-            var filePath = GetNotCrawledUrlsFilePath(indexFolder);
-            var notCrawledUrls = Json.LoadJson<List<string>>(filePath);
-
-            notCrawledUrls.Remove(url);
-
-            if (!Json.SaveAsFile(filePath, notCrawledUrls))
-            {
-                Console.WriteLine($"Could not save {filePath}");
-            }
-        }
+        //    if (!Json.SaveAsFile(filePath, notCrawledUrls))
+        //    {
+        //        Console.WriteLine($"Could not save {filePath}");
+        //    }
+        //}
 
         #region BackgroundWorkerMaster
 
@@ -421,28 +297,28 @@ namespace Crawler
         {
             var crawlerManifest = e.Argument as CrawlerSettings;
 
-            InitNotCrawledUrl(crawlerManifest.IndexFolder);
-            InitNotAnchorParsedPage(crawlerManifest.IndexFolder);
-            InitIgnoredLinks(crawlerManifest.IndexFolder);
+            DataHandler.Init(crawlerManifest.IndexFolder);
 
             // Add the starting url
             var startUrl = crawlerManifest.Url;
-            AddNotCrawledUrl(crawlerManifest.IndexFolder, startUrl);
+            DataHandler.NotCrawled.Add(crawlerManifest.IndexFolder, startUrl);
+
+            var crawledUrls = new List<string>();
+            var anchorParsedPages = new List<string>();
 
             var finished = false;
             var sw = new Stopwatch();
             sw.Start();
             while (finished != true)
             {
-                var processStatus = new CrawlerProcessStatus();
-                //processStatus.MaxGetUrls = notCrawledUrls.Count;
-                //processStatus.NoGetUrls = 0;
-                //processStatus.MaxPagesParsed = notCrawledUrls.Count;
-                //processStatus.NoPagesParsed = 0;
+                
 
-                backgroundWorkerMaster.ReportProgress(-1, processStatus);
-
-                var notCrawledUrl = CheckOutNotCrawledUrl(crawlerManifest.IndexFolder);
+                var notCrawledUrl = DataHandler.NotCrawled.Checkout(crawlerManifest.IndexFolder);
+                if (DataHandler.Crawled.Exist(crawlerManifest.IndexFolder, notCrawledUrl))
+                {
+                    DataHandler.NotCrawled.Remove(crawlerManifest.IndexFolder, notCrawledUrl);
+                    notCrawledUrl = string.Empty;
+                }
                 if (!string.IsNullOrEmpty(notCrawledUrl) && !backgroundWorkerGetUrl.IsBusy)
                 {
                     var checkUrlManifest = new CheckUrlManifest();
@@ -451,10 +327,16 @@ namespace Crawler
                     checkUrlManifest.UserAgent = crawlerManifest.UserAgent;
                     checkUrlManifest.IndexFolder = crawlerManifest.IndexFolder;
                     backgroundWorkerGetUrl.RunWorkerAsync(checkUrlManifest);
-                    RemoveNotCrawledUrl(crawlerManifest.IndexFolder, notCrawledUrl);
+                    //DataHandler.NotCrawled.Remove(crawlerManifest.IndexFolder, notCrawledUrl);
+                    crawledUrls.Add(notCrawledUrl);
                 }
 
-                var notAnchorParsedPage = CheckOutNotAnchorParsedPage(crawlerManifest.IndexFolder);
+                var notAnchorParsedPage = DataHandler.NotAnchorParsedPages.Checkout(crawlerManifest.IndexFolder);
+                if (anchorParsedPages.Contains(notAnchorParsedPage))
+                {
+                    DataHandler.NotAnchorParsedPages.Remove(crawlerManifest.IndexFolder, notAnchorParsedPage);
+                    notAnchorParsedPage = string.Empty;
+                }
                 if (!string.IsNullOrEmpty(notAnchorParsedPage) && !backgroundWorkerAnchorParsePage.IsBusy)
                 {
                     var anchorParsePageManifest = new AnchorParsePageManifest();
@@ -464,25 +346,41 @@ namespace Crawler
                     anchorParsePageManifest.IgnoreLinksPatternsList = crawlerManifest.IgnoreLinksPatternsList;
                     anchorParsePageManifest.ErroneousLinkPatternsList = crawlerManifest.ErroneousLinkPatternsList;
                     backgroundWorkerAnchorParsePage.RunWorkerAsync(anchorParsePageManifest);
-                    RemoveNotAnchorParsedPage(crawlerManifest.IndexFolder, notAnchorParsedPage);
+                    DataHandler.NotAnchorParsedPages.Remove(crawlerManifest.IndexFolder, notAnchorParsedPage);
+                    anchorParsedPages.Add(notAnchorParsedPage);
                 }
+
+                var processStatus = new CrawlerProcessStatus();
+                processStatus.MaxGetUrls = DataHandler.NotCrawled.Count(crawlerManifest.IndexFolder) + DataHandler.Crawled.Count(crawlerManifest.IndexFolder);
+                processStatus.NoGetUrls = crawledUrls.Count;
+                processStatus.MaxPagesParsed = DataHandler.NotAnchorParsedPages.Count(crawlerManifest.IndexFolder) + anchorParsedPages.Count;
+                processStatus.NoPagesParsed = anchorParsedPages.Count;
+                //processStatus.LatestCheckUrl = notCrawledUrl;
+                //processStatus.LatestAnchorParsedPage = notAnchorParsedPage;
 
                 backgroundWorkerMaster.ReportProgress(-1, processStatus);
 
-                if (!backgroundWorkerGetUrl.IsBusy && !backgroundWorkerAnchorParsePage.IsBusy && string.IsNullOrEmpty(notCrawledUrl) && string.IsNullOrEmpty(notAnchorParsedPage))
+                if (!backgroundWorkerGetUrl.IsBusy && 
+                    !backgroundWorkerAnchorParsePage.IsBusy && 
+                    string.IsNullOrEmpty(notCrawledUrl) && 
+                    string.IsNullOrEmpty(notAnchorParsedPage) && 
+                    sw.ElapsedMilliseconds > 15000 &&
+                    DataHandler.NotCrawled.Count(crawlerManifest.IndexFolder) == 0 &&
+                    DataHandler.NotAnchorParsedPages.Count(crawlerManifest.IndexFolder) == 0)
                 {
                     finished = true;
                 }
 
-                if (sw.ElapsedMilliseconds > 600000)
+                if (sw.ElapsedMilliseconds > crawlerManifest.TimeoutInMs) //Timeout
                 {
                     finished = true;
+                    crawlerManifest.TimedOut = true;
                 }
             }
 
             ////Log($"Found {values.Count()} URLs in the file {workLoad.CsvFile}");
 
-            //e.Result = pageLinks;
+            e.Result = crawlerManifest;
         }
 
         private void backgroundWorkerMaster_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -490,11 +388,14 @@ namespace Crawler
             // Change the value of the ProgressBar to the BackgroundWorker progress.
             var processStatus = e.UserState as CrawlerProcessStatus;
 
-            progressBarGetUrls.Maximum = processStatus.MaxGetUrls;
+            progressBarGetUrls.Maximum = (processStatus.MaxGetUrls > processStatus.NoGetUrls ? processStatus.MaxGetUrls : processStatus.NoGetUrls);
             progressBarGetUrls.Value = processStatus.NoGetUrls;
 
-            progressBarParsePages.Maximum = processStatus.MaxPagesParsed;
+            progressBarParsePages.Maximum = (processStatus.MaxPagesParsed > processStatus.NoPagesParsed ? processStatus.MaxPagesParsed : processStatus.NoPagesParsed);
             progressBarParsePages.Value = processStatus.NoPagesParsed;
+
+            //Log(processStatus.LatestCheckUrl);
+            //Log(processStatus.LatestAnchorParsedPage);
             //if (e.ProgressPercentage == -1)
             //    progressBarWork.Maximum = Convert.ToInt32(e.UserState);
             //else
@@ -504,13 +405,37 @@ namespace Crawler
         private void backgroundWorkerMaster_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             // Receive the result from DoWork, and display it.
+            var crawlerManifest = e.Result as CrawlerSettings;
+
+            var crawled = DataHandler.Crawled.LoadSource(crawlerManifest.IndexFolder);
+            crawled = crawled.Distinct().ToList();
+            DataHandler.Crawled.SaveSource(crawlerManifest.IndexFolder, crawled);
+
+            var ignoredLinks = DataHandler.IgnoredLinks.LoadSource(crawlerManifest.IndexFolder);
+            ignoredLinks = ignoredLinks.Distinct().ToList();
+            DataHandler.IgnoredLinks.SaveSource(crawlerManifest.IndexFolder, ignoredLinks);
 
             //linkLabelResultFolder.Text = _workLoad.OutputDirectory;
-            //Log("The end!");
+            if (crawlerManifest.TimedOut)
+            {
+                Log("Crawler timed out!");
+            }
+            Log("The end!");
             buttonStartWork.Enabled = true;
-            //progressBarWork.Value = 0;
+            progressBarGetUrls.Value = 0;
+            progressBarParsePages.Value = 0;
         }
 
         #endregion
+
+        private void LogReset()
+        {
+            textBoxResult.Text = string.Empty;
+        }
+
+        private void Log(string message)
+        {
+            textBoxResult.Text = message + "\r\n" + textBoxResult.Text;
+        }
     }
 }

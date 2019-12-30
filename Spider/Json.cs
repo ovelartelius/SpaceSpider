@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.IO;
+using System.Threading;
 
 namespace Spider
 {
@@ -15,21 +16,38 @@ namespace Spider
         {
             var result = false;
 
-            try
+            var fileNotSaved = true;
+            var iteration = 0;
+            while (fileNotSaved || iteration > 15)
             {
-                using (StreamWriter file = File.CreateText(fileUri))
+                try
                 {
-                    var serializer = new JsonSerializer();
-                    //serialize object directly into file stream
-                    serializer.Serialize(file, theObject);
-                    result = true;
+                    using (StreamWriter file = File.CreateText(fileUri))
+                    {
+                        var serializer = new JsonSerializer();
+                        //serialize object directly into file stream
+                        serializer.Serialize(file, theObject);
+                        result = true;
+                        fileNotSaved = false;
+                    }
+                }
+                catch (Exception e)
+                {
+                    var rnd = new Random(DateTime.Now.Millisecond);
+                    int waitMs = rnd.Next(30, 1000);
+
+                    Console.WriteLine(e.Message);
+                    Console.WriteLine($"Could not save {fileUri}");
+                    Console.WriteLine($"Will try again in {waitMs} ms");
+                    Thread.Sleep(waitMs);
                 }
 
+                iteration++;
             }
-            catch (Exception e)
+
+            if (fileNotSaved)
             {
-                Console.WriteLine(e.Message);
-                result = false;
+                throw new ApplicationException($"Failed to save file {fileUri}.");
             }
 
             return result;
@@ -39,14 +57,35 @@ namespace Spider
         {
             var jsonObject = default(T);
 
-            try
+            var fileLoaded = false;
+            var iteration = 0;
+            while (!fileLoaded || iteration > 15)
             {
-                jsonObject = JsonConvert.DeserializeObject<T>(File.ReadAllText(fileUri));
+                try
+                {
+                    using (TextReader notesReader = new StreamReader(fileUri))
+                    {
+                        jsonObject = JsonConvert.DeserializeObject<T>(notesReader.ReadToEnd());
+                        fileLoaded = true;
+                    }
+                }
+                catch (Exception e)
+                {
+                    var rnd = new Random(DateTime.Now.Millisecond);
+                    int waitMs = rnd.Next(30, 1000);
 
+                    Console.WriteLine(e.Message);
+                    Console.WriteLine($"Could not load {fileUri}");
+                    Console.WriteLine($"Will try again in {waitMs} ms");
+                    Thread.Sleep(waitMs);
+                }
+
+                iteration++;
             }
-            catch (Exception e)
+
+            if (!fileLoaded)
             {
-                Console.WriteLine(e.Message);
+                throw new ApplicationException($"Failed to load file {fileUri}.");
             }
 
             return jsonObject;

@@ -50,15 +50,32 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\CheckUrlResults.cs" />
+    <Compile Include="Data\Crawled.cs" />
+    <Compile Include="Data\BrokenLinks.cs" />
+    <Compile Include="Data\IRelatedListDataSource.cs" />
+    <Compile Include="Data\NotCrawled.cs" />
+    <Compile Include="Data\BaseDataHandler.cs" />
+    <Compile Include="Data\DataHandler.cs" />
+    <Compile Include="Data\NotAnchorParsedPages.cs" />
+    <Compile Include="Data\IStringListDataSource.cs" />
+    <Compile Include="Data\IgnoredLinks.cs" />
+    <Compile Include="Form1.GetUrl.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Form1.AnchorParsePage.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Models\AnchorParsePageManifest.cs" />
     <Compile Include="Models\CrawlerProcessStatus.cs" />
     <Compile Include="Models\CrawlerSettings.cs" />
+    <Compile Include="Models\RelatedLink.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">
@@ -92,5 +109,6 @@
       <Name>Spider</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -45,6 +45,8 @@
             this.folderIndexDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.tabControlSettings = new System.Windows.Forms.TabControl();
             this.tabPageBasic = new System.Windows.Forms.TabPage();
+            this.labelTimeoutInMs = new System.Windows.Forms.Label();
+            this.textBoxTimeoutInMs = new System.Windows.Forms.TextBox();
             this.buttonOutputDirectory = new System.Windows.Forms.Button();
             this.buttonLoadCsv = new System.Windows.Forms.Button();
             this.buttonStartWork = new System.Windows.Forms.Button();
@@ -116,7 +118,7 @@
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(8, 2, 0, 2);
-            this.menuStrip1.Size = new System.Drawing.Size(1585, 28);
+            this.menuStrip1.Size = new System.Drawing.Size(1216, 28);
             this.menuStrip1.TabIndex = 5;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -132,14 +134,14 @@
             // loadSettingsToolStripMenuItem
             // 
             this.loadSettingsToolStripMenuItem.Name = "loadSettingsToolStripMenuItem";
-            this.loadSettingsToolStripMenuItem.Size = new System.Drawing.Size(180, 26);
+            this.loadSettingsToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.loadSettingsToolStripMenuItem.Text = "Load settings";
             this.loadSettingsToolStripMenuItem.Click += new System.EventHandler(this.loadSettingsToolStripMenuItem_Click);
             // 
             // saveSettingsToolStripMenuItem
             // 
             this.saveSettingsToolStripMenuItem.Name = "saveSettingsToolStripMenuItem";
-            this.saveSettingsToolStripMenuItem.Size = new System.Drawing.Size(180, 26);
+            this.saveSettingsToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.saveSettingsToolStripMenuItem.Text = "Save settings";
             this.saveSettingsToolStripMenuItem.Click += new System.EventHandler(this.saveSettingsToolStripMenuItem_Click);
             // 
@@ -162,7 +164,7 @@
             // 
             // textBoxResult
             // 
-            this.textBoxResult.Location = new System.Drawing.Point(1008, 42);
+            this.textBoxResult.Location = new System.Drawing.Point(671, 33);
             this.textBoxResult.Margin = new System.Windows.Forms.Padding(4);
             this.textBoxResult.Multiline = true;
             this.textBoxResult.Name = "textBoxResult";
@@ -213,6 +215,8 @@
             // 
             // tabPageBasic
             // 
+            this.tabPageBasic.Controls.Add(this.labelTimeoutInMs);
+            this.tabPageBasic.Controls.Add(this.textBoxTimeoutInMs);
             this.tabPageBasic.Controls.Add(this.buttonOutputDirectory);
             this.tabPageBasic.Controls.Add(this.buttonIndexDirectory);
             this.tabPageBasic.Controls.Add(this.buttonLoadCsv);
@@ -236,6 +240,23 @@
             this.tabPageBasic.TabIndex = 0;
             this.tabPageBasic.Text = "Basic";
             this.tabPageBasic.UseVisualStyleBackColor = true;
+            // 
+            // labelTimeoutInMs
+            // 
+            this.labelTimeoutInMs.AutoSize = true;
+            this.labelTimeoutInMs.Location = new System.Drawing.Point(11, 216);
+            this.labelTimeoutInMs.Name = "labelTimeoutInMs";
+            this.labelTimeoutInMs.Size = new System.Drawing.Size(110, 17);
+            this.labelTimeoutInMs.TabIndex = 22;
+            this.labelTimeoutInMs.Text = "Timeout (in ms):";
+            // 
+            // textBoxTimeoutInMs
+            // 
+            this.textBoxTimeoutInMs.Location = new System.Drawing.Point(12, 235);
+            this.textBoxTimeoutInMs.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.textBoxTimeoutInMs.Name = "textBoxTimeoutInMs";
+            this.textBoxTimeoutInMs.Size = new System.Drawing.Size(459, 22);
+            this.textBoxTimeoutInMs.TabIndex = 21;
             // 
             // buttonOutputDirectory
             // 
@@ -457,30 +478,32 @@
             // backgroundWorkerGetUrl
             // 
             this.backgroundWorkerGetUrl.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorkerGetUrl_DoWork);
+            this.backgroundWorkerGetUrl.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorkerGetUrl_RunWorkerCompleted);
             // 
             // backgroundWorkerAnchorParsePage
             // 
             this.backgroundWorkerAnchorParsePage.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorkerAnchorParsePage_DoWork);
+            this.backgroundWorkerAnchorParsePage.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorkerAnchorParsePage_RunWorkerCompleted);
             // 
             // progressBarGetUrls
             // 
-            this.progressBarGetUrls.Location = new System.Drawing.Point(902, 517);
+            this.progressBarGetUrls.Location = new System.Drawing.Point(671, 481);
             this.progressBarGetUrls.Name = "progressBarGetUrls";
-            this.progressBarGetUrls.Size = new System.Drawing.Size(342, 23);
+            this.progressBarGetUrls.Size = new System.Drawing.Size(517, 23);
             this.progressBarGetUrls.TabIndex = 22;
             // 
             // progressBarParsePages
             // 
-            this.progressBarParsePages.Location = new System.Drawing.Point(902, 555);
+            this.progressBarParsePages.Location = new System.Drawing.Point(671, 519);
             this.progressBarParsePages.Name = "progressBarParsePages";
-            this.progressBarParsePages.Size = new System.Drawing.Size(342, 23);
+            this.progressBarParsePages.Size = new System.Drawing.Size(517, 23);
             this.progressBarParsePages.TabIndex = 23;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1585, 767);
+            this.ClientSize = new System.Drawing.Size(1216, 767);
             this.Controls.Add(this.progressBarParsePages);
             this.Controls.Add(this.progressBarGetUrls);
             this.Controls.Add(this.tabControlSettings);
@@ -549,6 +572,8 @@
         private System.ComponentModel.BackgroundWorker backgroundWorkerAnchorParsePage;
         private System.Windows.Forms.ProgressBar progressBarGetUrls;
         private System.Windows.Forms.ProgressBar progressBarParsePages;
+        private System.Windows.Forms.Label labelTimeoutInMs;
+        private System.Windows.Forms.TextBox textBoxTimeoutInMs;
     }
 }
 

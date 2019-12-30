@@ -14,6 +14,7 @@ namespace Spider.Models
             HeaderData = new Dictionary<string, string>();
             IgnoredLinks = new List<string>();
             DestinationUrls = new List<string>();
+            ExternalUrls = new List<string>();
         }
 
         public string Url { get; set; }

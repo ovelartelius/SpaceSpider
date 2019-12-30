@@ -34,5 +34,10 @@ namespace Crawler.Models
         [JsonIgnore]
         public List<string> ErroneousLinkPatternsList { get; set; }
 
+        public int TimeoutInMs { get; set; }
+
+        [JsonIgnore]
+        public bool TimedOut { get; set; }
+
     }
 }

@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="HtmlParser.cs" />
     <Compile Include="Json.cs" />
     <Compile Include="Models\CheckUrlManifest.cs" />
     <Compile Include="Models\ISettings.cs" />
