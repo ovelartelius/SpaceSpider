@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CheckRequestedUrls
+namespace CheckRequestedUrls.Models.Csv
 {
     public class CsvSimpleUrl
     {

@@ -10,14 +10,15 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using CheckRequestedUrls.Models;
+using CheckRequestedUrls.Models.Csv;
 using Spider.Extensions;
 using Spider.Models;
 
 namespace CheckRequestedUrls
 {
-    public partial class Form1 : Form
+    public partial class SitemapForm : Form
     {
-		public Form1()
+		public SitemapForm()
         {
             InitializeComponent();
 
@@ -53,23 +54,25 @@ namespace CheckRequestedUrls
                 }
             }
 
-            backgroundWorkerLoadCsv.RunWorkerAsync(_workLoad);
+            backgroundWorkerLoadCsv.RunWorkerAsync(_workLoad.SitemapUrl);
         }
 
 		private WorkLoad PopulateWorkLoad()
 		{
 			var workLoad = new WorkLoad
 			{
-				CsvFile = textBoxCsvFile.Text,
+				//CsvFile = textBoxCsvFile.Text,
 				NewSiteDomain = textBoxNewSiteDomain.Text,
 				UserAgent = textBoxUserAgent.Text,
 				Proxy = textBoxProxy.Text,
 				IgnorePatterns = new List<string>(),
-				SearchUrl = textBoxSearchUrl.Text,
+				//SearchUrl = textBoxSearchUrl.Text,
 				OutputDirectory = textBoxOutputDirectory.Text,
-				RunOverVpn = checkBoxOverVpn.Checked,
-				IgnoreSearch = checkBoxIgnoreSearch.Checked,
-				CheckDomainBeforeStart = checkBoxCheckDomainBeforeStart.Checked
+				//RunOverVpn = checkBoxOverVpn.Checked,
+				//IgnoreSearch = checkBoxIgnoreSearch.Checked,
+				CheckDomainBeforeStart = checkBoxCheckDomainBeforeStart.Checked,
+
+                SitemapUrl = textBoxSitemapUrl.Text
 			};
             workLoad.IgnorePatterns = textBoxIgnorePatterns.Text.SplitToList();
             var settings = new CheckUrlsSettings();
@@ -111,7 +114,12 @@ namespace CheckRequestedUrls
 
                 try
                 {
-                    var newUrl = url.SwapHostname(workLoad.NewSiteDomain);
+                    var newUrl = url;
+
+                    if (!string.IsNullOrEmpty(workLoad.NewSiteDomain))
+                    {
+                        newUrl = url.SwapHostname(workLoad.NewSiteDomain);
+                    }
 
                     //Log($"Convert {value.Url} to {newUrl}");
                     var checkUrlResult = new CheckUrlResult { Url = newUrl };
@@ -128,32 +136,6 @@ namespace CheckRequestedUrls
                         checkUrlManifest.SourceUrls = new List<string>();
                         checkUrlManifest.UserAgent = workLoad.UserAgent;
                         checkUrlResult = spider.CheckUrl(checkUrlManifest);
-
-                        if (!workLoad.IgnoreSearch)
-                        {
-                            // Go a check against the search.
-                            var oldUrlPathAndQuery = WebUtility.UrlEncode(new Uri(url).PathAndQuery);
-                            dynamic something;
-                            var searchUrl = string.Empty;
-                            //var searchUrl = $"https://pws-search1-tst.sebank.se/rest/apps/stats/searchers/paths?hits=20&q={oldUrlPathAndQuery}&range!gte!@timestamp=now-30d/d";
-                            if (workLoad.RunOverVpn)
-                            {
-                                searchUrl = "http://epicms-hostbucket.sebank.se/api/tempsearch/index?id=" + oldUrlPathAndQuery;
-                                Console.WriteLine(searchUrl);
-                            }
-                            else
-                            {
-                                searchUrl = workLoad.SearchUrl.Replace("{oldUrlPathAndQuery}", oldUrlPathAndQuery);
-                                Console.WriteLine(searchUrl);
-                            }
-                            something = spider.GetExternalData(searchUrl);
-
-                            var totalHits = something.stats.totalHits;
-                            if (totalHits != 0)
-                            {
-                                checkUrlResult.HistoricHits = totalHits;
-                            }
-                        }
                     }
 
                     pageLinks.Add(checkUrlResult);
@@ -426,33 +408,12 @@ namespace CheckRequestedUrls
         #region BackgroundWorkerLoadCsv
         private void backgroundWorkerLoadCsv_DoWork(object sender, DoWorkEventArgs e)
         {
-            var workLoad = e.Argument as WorkLoad;
+            var sitemapUrl = e.Argument as string;
 
-            //List<CsvSimpleUrl> values = File.ReadAllLines(workLoad.CsvFile)
-            //                                .Skip(1)
-            //                                .Select(v => CsvSimpleUrl.FromCsv(v))
-            //                                .Distinct()
-            //                                .ToList();
-            List<CsvSimpleUrl> values = File.ReadAllLines(workLoad.Settings.CsvFilePath)
-                .Skip((workLoad.Settings.FirstRowContainsTitle ? 1 : 0))
-                .Select(v => CsvSimpleUrl.FromCsv(v, workLoad.Settings.CsvFileSeperator))
-                .Distinct()
-                .ToList();
-
-            var urls = values.Select(x => x.Url).ToList();
+            var urls = Spider.Sitemap.GetSitemapUrls(sitemapUrl);
 
             e.Result = urls;
         }
-
-        //private void backgroundWorkerLoadCsv_ProgressChanged(object sender, ProgressChangedEventArgs e)
-        //{
-        //    // Change the value of the ProgressBar to the BackgroundWorker progress.
-        //    //progressBarWork.Value = e.ProgressPercentage;
-        //    progressBarWork.PerformStep();
-
-        //    // Set the text.
-        //    this.Text = e.ProgressPercentage.ToString();
-        //}
 
         private void backgroundWorkerLoadCsv_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
@@ -461,14 +422,14 @@ namespace CheckRequestedUrls
             //
             _workLoad.Urls = e.Result as List<string>;
 
-            // Remove all emty
+            // Remove all empty
             _workLoad.Urls = _workLoad.Urls.Where(x => !string.IsNullOrEmpty(x)).ToList();
             // Make them unique
             _workLoad.Urls = _workLoad.Urls.Distinct().ToList();
             //
             // Will display "6 3" in title Text (in this example)
             //
-            Log($"Found {_workLoad.Urls.Count().ToString()} URLs in the CSV file.");
+            Log($"Found {_workLoad.Urls.Count().ToString()} URLs in the sitemap.");
 
             StartUrlCheck();
         }
@@ -539,53 +500,41 @@ namespace CheckRequestedUrls
 
 		private void PopulateFormWithSettingsValues(CheckUrlsSettings settings)
 		{
-			textBoxCsvFile.Text = settings.CsvFilePath;
-            checkBoxFirstRowContainsTitle.Checked = settings.FirstRowContainsTitle;
-            textBoxCsvFileSeperator.Text = settings.CsvFileSeperator;
+			//textBoxCsvFile.Text = settings.CsvFilePath;
+            //checkBoxFirstRowContainsTitle.Checked = settings.FirstRowContainsTitle;
+            //textBoxCsvFileSeperator.Text = settings.CsvFileSeperator;
 			textBoxIgnorePatterns.Text = settings.IgnorePatterns;
-			textBoxSearchUrl.Text = settings.SearchUrl;
-			checkBoxOverVpn.Checked = settings.RunningOverVpn;
-			checkBoxIgnoreSearch.Checked = settings.IgnoreSearch;
+			//textBoxSearchUrl.Text = settings.SearchUrl;
+			//checkBoxOverVpn.Checked = settings.RunningOverVpn;
+			//checkBoxIgnoreSearch.Checked = settings.IgnoreSearch;
 			checkBoxCheckDomainBeforeStart.Checked = settings.CheckSiteDomainBeforeStart;
 			textBoxNewSiteDomain.Text = settings.NewSiteDomain;
 			textBoxProxy.Text = settings.Proxy;
 			textBoxUserAgent.Text = settings.UserAgent;
 			textBoxOutputDirectory.Text = settings.OutputDirectory;
-		}
+
+            textBoxSitemapUrl.Text = settings.SitemapUrl;
+        }
 
 		private void PopulateSettingsWithFormValues(CheckUrlsSettings settings)
 		{
-			settings.CsvFilePath = textBoxCsvFile.Text;
-            settings.FirstRowContainsTitle = checkBoxFirstRowContainsTitle.Checked;
-            settings.CsvFileSeperator = textBoxCsvFileSeperator.Text;
+			//settings.CsvFilePath = textBoxCsvFile.Text;
+            //settings.FirstRowContainsTitle = checkBoxFirstRowContainsTitle.Checked;
+            //settings.CsvFileSeperator = textBoxCsvFileSeperator.Text;
             settings.IgnorePatterns = textBoxIgnorePatterns.Text;
-			settings.SearchUrl = textBoxSearchUrl.Text;
-			settings.RunningOverVpn = checkBoxOverVpn.Checked;
-			settings.IgnoreSearch = checkBoxIgnoreSearch.Checked;
+			//settings.SearchUrl = textBoxSearchUrl.Text;
+			//settings.RunningOverVpn = checkBoxOverVpn.Checked;
+			//settings.IgnoreSearch = checkBoxIgnoreSearch.Checked;
 			settings.CheckSiteDomainBeforeStart = checkBoxCheckDomainBeforeStart.Checked;
 			settings.NewSiteDomain = textBoxNewSiteDomain.Text;
 			settings.Proxy = textBoxProxy.Text;
 			settings.UserAgent = textBoxUserAgent.Text;
 			settings.OutputDirectory = textBoxOutputDirectory.Text;
-		}
 
-		private void buttonLoadCsv_Click(object sender, EventArgs e)
-		{
-			openCsvDialog.InitialDirectory = Spider.Settings.LoadRegistrySetting("CheckUrl.DataFolder");
-			openCsvDialog.ShowDialog();
-		}
+            settings.SitemapUrl = textBoxSitemapUrl.Text;
+        }
 
-		private void openCsvDialog_FileOk(object sender, CancelEventArgs e)
-		{
-			Console.WriteLine(openCsvDialog.FileName);
-
-			textBoxCsvFile.Text = openCsvDialog.FileName;
-
-			var folder = new FileInfo(openCsvDialog.FileName).Directory.FullName;
-			Spider.Settings.SaveRegistrySetting("CheckUrl.DataFolder", folder);
-		}
-
-		private void buttonOutputDirectory_Click(object sender, EventArgs e)
+        private void buttonOutputDirectory_Click(object sender, EventArgs e)
 		{
             folderOutputDialog.SelectedPath = Spider.Settings.LoadRegistrySetting("CheckUrl.OutputFolder");
             if (folderOutputDialog.ShowDialog() == DialogResult.OK)
@@ -602,6 +551,21 @@ namespace CheckRequestedUrls
 		}
 
         private void textBoxOutputDirectory_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void cSVFileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var frm = new CsvForm();
+            frm.Location = this.Location;
+            frm.StartPosition = FormStartPosition.Manual;
+            frm.Show();
+            this.Hide();
+
+        }
+
+        private void SitemapForm_Load(object sender, EventArgs e)
         {
 
         }

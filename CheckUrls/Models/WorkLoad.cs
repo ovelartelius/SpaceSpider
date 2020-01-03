@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
-using CheckRequestedUrls.Models;
 using Spider.Models;
 
-namespace CheckRequestedUrls
+namespace CheckRequestedUrls.Models
 {
     public class WorkLoad
     {
@@ -19,6 +18,8 @@ namespace CheckRequestedUrls
         public bool RunOverVpn { get; set; }
         public bool IgnoreSearch { get; set; }
         public bool CheckDomainBeforeStart { get; set; }
+
+        public string SitemapUrl { get; set; }
 
 		///// <summary>
 		///// Method to run to check that all the data in this object is ok to start.

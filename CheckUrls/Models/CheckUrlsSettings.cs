@@ -17,5 +17,7 @@ namespace CheckRequestedUrls.Models
         public string Proxy { get; set; }
         public string UserAgent { get; set; }
         public string OutputDirectory { get; set; }
+
+        public string SitemapUrl { get; set; }
     }
 }
