@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CheckRequestedUrls.Models.Csv
+namespace CheckUrls.Models.Csv
 {
     public class CsvGoogleTopTarget
     {

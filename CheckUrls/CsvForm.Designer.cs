@@ -1,4 +1,4 @@
-﻿namespace CheckRequestedUrls
+﻿namespace CheckUrls
 {
     partial class CsvForm
     {
@@ -49,7 +49,6 @@
             this.labelSearchUrl = new System.Windows.Forms.Label();
             this.textBoxOutputDirectory = new System.Windows.Forms.TextBox();
             this.labelOutputDirectory = new System.Windows.Forms.Label();
-            this.checkBoxOverVpn = new System.Windows.Forms.CheckBox();
             this.checkBoxIgnoreSearch = new System.Windows.Forms.CheckBox();
             this.checkBoxCheckDomainBeforeStart = new System.Windows.Forms.CheckBox();
             this.openSettingsDialog = new System.Windows.Forms.OpenFileDialog();
@@ -74,6 +73,7 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.linkLabelResultFolder = new System.Windows.Forms.LinkLabel();
             this.folderOutputDialog = new System.Windows.Forms.FolderBrowserDialog();
+            this.checkBoxOverVpn = new System.Windows.Forms.CheckBox();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPageBasic.SuspendLayout();
@@ -267,17 +267,6 @@
             this.labelOutputDirectory.TabIndex = 11;
             this.labelOutputDirectory.Text = "Output directory:";
             // 
-            // checkBoxOverVpn
-            // 
-            this.checkBoxOverVpn.AutoSize = true;
-            this.checkBoxOverVpn.Location = new System.Drawing.Point(16, 23);
-            this.checkBoxOverVpn.Margin = new System.Windows.Forms.Padding(4);
-            this.checkBoxOverVpn.Name = "checkBoxOverVpn";
-            this.checkBoxOverVpn.Size = new System.Drawing.Size(147, 21);
-            this.checkBoxOverVpn.TabIndex = 13;
-            this.checkBoxOverVpn.Text = "Running over VPN";
-            this.checkBoxOverVpn.UseVisualStyleBackColor = true;
-            // 
             // checkBoxIgnoreSearch
             // 
             this.checkBoxIgnoreSearch.AutoSize = true;
@@ -363,13 +352,13 @@
             // cSVFileToolStripMenuItem
             // 
             this.cSVFileToolStripMenuItem.Name = "cSVFileToolStripMenuItem";
-            this.cSVFileToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.cSVFileToolStripMenuItem.Size = new System.Drawing.Size(147, 26);
             this.cSVFileToolStripMenuItem.Text = "CSV file";
             // 
             // sitemapToolStripMenuItem
             // 
             this.sitemapToolStripMenuItem.Name = "sitemapToolStripMenuItem";
-            this.sitemapToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.sitemapToolStripMenuItem.Size = new System.Drawing.Size(147, 26);
             this.sitemapToolStripMenuItem.Text = "Sitemap";
             this.sitemapToolStripMenuItem.Click += new System.EventHandler(this.sitemapToolStripMenuItem_Click);
             // 
@@ -479,6 +468,7 @@
             // 
             // tabPageSearch
             // 
+            this.tabPageSearch.Controls.Add(this.checkBoxOverVpn);
             this.tabPageSearch.Controls.Add(this.checkBoxIgnoreSearch);
             this.tabPageSearch.Controls.Add(this.labelSearchUrl);
             this.tabPageSearch.Controls.Add(this.textBoxSearchUrl);
@@ -493,7 +483,6 @@
             // 
             // tabPageAdvance
             // 
-            this.tabPageAdvance.Controls.Add(this.checkBoxOverVpn);
             this.tabPageAdvance.Controls.Add(this.labelProxy);
             this.tabPageAdvance.Controls.Add(this.textBoxProxy);
             this.tabPageAdvance.Location = new System.Drawing.Point(4, 25);
@@ -531,6 +520,17 @@
             // folderOutputDialog
             // 
             this.folderOutputDialog.RootFolder = System.Environment.SpecialFolder.MyComputer;
+            // 
+            // checkBoxOverVpn
+            // 
+            this.checkBoxOverVpn.AutoSize = true;
+            this.checkBoxOverVpn.Location = new System.Drawing.Point(187, 23);
+            this.checkBoxOverVpn.Margin = new System.Windows.Forms.Padding(4);
+            this.checkBoxOverVpn.Name = "checkBoxOverVpn";
+            this.checkBoxOverVpn.Size = new System.Drawing.Size(147, 21);
+            this.checkBoxOverVpn.TabIndex = 15;
+            this.checkBoxOverVpn.Text = "Running over VPN";
+            this.checkBoxOverVpn.UseVisualStyleBackColor = true;
             // 
             // CsvForm
             // 
@@ -583,7 +583,6 @@
         private System.Windows.Forms.Label labelSearchUrl;
         private System.Windows.Forms.TextBox textBoxOutputDirectory;
         private System.Windows.Forms.Label labelOutputDirectory;
-        private System.Windows.Forms.CheckBox checkBoxOverVpn;
         private System.Windows.Forms.CheckBox checkBoxIgnoreSearch;
         private System.Windows.Forms.CheckBox checkBoxCheckDomainBeforeStart;
         private System.Windows.Forms.Label labelIgnoreRegExPatterns;
@@ -609,6 +608,7 @@
         private System.Windows.Forms.ToolStripMenuItem checkTypesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem cSVFileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem sitemapToolStripMenuItem;
+        private System.Windows.Forms.CheckBox checkBoxOverVpn;
     }
 }
 

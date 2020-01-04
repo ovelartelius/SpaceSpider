@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Spider.Models;
 
-namespace CheckRequestedUrls.Models
+namespace CheckUrls.Models
 {
     public class WorkLoad
     {

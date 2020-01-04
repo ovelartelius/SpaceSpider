@@ -1,6 +1,6 @@
 ﻿using Spider.Models;
 
-namespace CheckRequestedUrls.Models
+namespace CheckUrls.Models
 {
     public class CheckUrlsSettings : ISettings
     {

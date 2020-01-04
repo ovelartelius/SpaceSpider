@@ -1,4 +1,4 @@
-﻿namespace CheckRequestedUrls
+﻿namespace CheckUrls
 {
     partial class SitemapForm
     {
@@ -72,7 +72,7 @@
             // labelIgnoreRegExPatterns
             // 
             this.labelIgnoreRegExPatterns.AutoSize = true;
-            this.labelIgnoreRegExPatterns.Location = new System.Drawing.Point(8, 146);
+            this.labelIgnoreRegExPatterns.Location = new System.Drawing.Point(8, 105);
             this.labelIgnoreRegExPatterns.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelIgnoreRegExPatterns.Name = "labelIgnoreRegExPatterns";
             this.labelIgnoreRegExPatterns.Size = new System.Drawing.Size(153, 17);
@@ -81,7 +81,7 @@
             // 
             // textBoxIgnorePatterns
             // 
-            this.textBoxIgnorePatterns.Location = new System.Drawing.Point(12, 167);
+            this.textBoxIgnorePatterns.Location = new System.Drawing.Point(12, 126);
             this.textBoxIgnorePatterns.Margin = new System.Windows.Forms.Padding(4);
             this.textBoxIgnorePatterns.Multiline = true;
             this.textBoxIgnorePatterns.Name = "textBoxIgnorePatterns";
@@ -92,7 +92,7 @@
             // 
             // buttonStartWork
             // 
-            this.buttonStartWork.Location = new System.Drawing.Point(444, 435);
+            this.buttonStartWork.Location = new System.Drawing.Point(444, 514);
             this.buttonStartWork.Margin = new System.Windows.Forms.Padding(4);
             this.buttonStartWork.Name = "buttonStartWork";
             this.buttonStartWork.Size = new System.Drawing.Size(164, 54);
@@ -125,7 +125,6 @@
             this.textBoxNewSiteDomain.Name = "textBoxNewSiteDomain";
             this.textBoxNewSiteDomain.Size = new System.Drawing.Size(540, 22);
             this.textBoxNewSiteDomain.TabIndex = 3;
-            this.textBoxNewSiteDomain.Text = "http://localhost:56321/";
             // 
             // labelNewSiteDomain
             // 
@@ -133,9 +132,9 @@
             this.labelNewSiteDomain.Location = new System.Drawing.Point(9, 304);
             this.labelNewSiteDomain.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelNewSiteDomain.Name = "labelNewSiteDomain";
-            this.labelNewSiteDomain.Size = new System.Drawing.Size(111, 17);
+            this.labelNewSiteDomain.Size = new System.Drawing.Size(161, 17);
             this.labelNewSiteDomain.TabIndex = 4;
-            this.labelNewSiteDomain.Text = "New site domain";
+            this.labelNewSiteDomain.Text = "Test on new site domain";
             // 
             // labelProxy
             // 
@@ -172,7 +171,7 @@
             // 
             // textBoxOutputDirectory
             // 
-            this.textBoxOutputDirectory.Location = new System.Drawing.Point(12, 400);
+            this.textBoxOutputDirectory.Location = new System.Drawing.Point(12, 438);
             this.textBoxOutputDirectory.Margin = new System.Windows.Forms.Padding(4);
             this.textBoxOutputDirectory.Name = "textBoxOutputDirectory";
             this.textBoxOutputDirectory.Size = new System.Drawing.Size(540, 22);
@@ -182,7 +181,7 @@
             // labelOutputDirectory
             // 
             this.labelOutputDirectory.AutoSize = true;
-            this.labelOutputDirectory.Location = new System.Drawing.Point(8, 380);
+            this.labelOutputDirectory.Location = new System.Drawing.Point(8, 418);
             this.labelOutputDirectory.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelOutputDirectory.Name = "labelOutputDirectory";
             this.labelOutputDirectory.Size = new System.Drawing.Size(114, 17);
@@ -197,9 +196,9 @@
             this.checkBoxCheckDomainBeforeStart.Location = new System.Drawing.Point(12, 355);
             this.checkBoxCheckDomainBeforeStart.Margin = new System.Windows.Forms.Padding(4);
             this.checkBoxCheckDomainBeforeStart.Name = "checkBoxCheckDomainBeforeStart";
-            this.checkBoxCheckDomainBeforeStart.Size = new System.Drawing.Size(226, 21);
+            this.checkBoxCheckDomainBeforeStart.Size = new System.Drawing.Size(255, 21);
             this.checkBoxCheckDomainBeforeStart.TabIndex = 15;
-            this.checkBoxCheckDomainBeforeStart.Text = "Check site domain before start:";
+            this.checkBoxCheckDomainBeforeStart.Text = "Check new site domain before start:";
             this.checkBoxCheckDomainBeforeStart.UseVisualStyleBackColor = true;
             // 
             // openSettingsDialog
@@ -324,7 +323,7 @@
             // 
             // buttonOutputDirectory
             // 
-            this.buttonOutputDirectory.Location = new System.Drawing.Point(563, 399);
+            this.buttonOutputDirectory.Location = new System.Drawing.Point(563, 437);
             this.buttonOutputDirectory.Margin = new System.Windows.Forms.Padding(4);
             this.buttonOutputDirectory.Name = "buttonOutputDirectory";
             this.buttonOutputDirectory.Size = new System.Drawing.Size(45, 26);

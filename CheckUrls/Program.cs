@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace CheckRequestedUrls
+namespace CheckUrls
 {
     static class Program
     {

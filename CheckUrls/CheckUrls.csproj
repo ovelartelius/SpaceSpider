@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{9821E474-8EAA-4AE2-BB64-297559D4F03F}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>CheckRequestedUrls</RootNamespace>
-    <AssemblyName>CheckRequestedUrls</AssemblyName>
+    <RootNamespace>CheckUrls</RootNamespace>
+    <AssemblyName>CheckUrls</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -55,6 +55,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ResultReporter.cs" />
     <Compile Include="SitemapForm.cs">
       <SubType>Form</SubType>
     </Compile>

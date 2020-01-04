@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 
 namespace Spider
@@ -22,12 +18,9 @@ namespace Spider
                 var document = XDocument.Load(url);
                 XNamespace ns = "http://www.sitemaps.org/schemas/sitemap/0.9";
 
-                //var locations = document.Descendants(ns + "loc")
-                //    .Select(element => element.Value)
-                //    .Aggregate((s1, s2) => s1 + ";" + s2);
-
                 if (document.Root.Name.LocalName == "sitemapindex")
                 {
+                    // The sitemap is a document that is split up in more than one file. Lets get them all.
                     var sitemaps = document.Descendants(ns + "loc").Select(element => element.Value).ToList();
                     foreach (var sitemap in sitemaps)
                     {
@@ -39,13 +32,11 @@ namespace Spider
                 {
                     sitemapUrls.AddRange(GetUrlsFromDocument(document));
                 }
-
-                //sitemapUrls = document.Descendants(ns + "loc")
-                //    .Select(element => element.Value).ToList();
             }
             catch (Exception ex)
             {
-                // Dont know what to do?
+                Console.WriteLine(ex.Message);
+                Console.WriteLine($"Could not handle the sitemap {url}");
             }
 
             return sitemapUrls;
