@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckUrls", "CheckUrls\Chec
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinkjuiceCreator", "LinkjuiceCreator\LinkjuiceCreator.csproj", "{0E14DE20-3C0D-4404-8BF8-162A2A55D343}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gunner", "Gunner\Gunner.csproj", "{F2450C09-2896-4794-9284-5A1D5E03393C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{0E14DE20-3C0D-4404-8BF8-162A2A55D343}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0E14DE20-3C0D-4404-8BF8-162A2A55D343}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0E14DE20-3C0D-4404-8BF8-162A2A55D343}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F2450C09-2896-4794-9284-5A1D5E03393C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2450C09-2896-4794-9284-5A1D5E03393C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2450C09-2896-4794-9284-5A1D5E03393C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2450C09-2896-4794-9284-5A1D5E03393C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
