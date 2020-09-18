@@ -30,11 +30,12 @@ namespace Spider
 
                 try
                 {
-                    var newUrl = url;
+
+                    var newUrl = url.CleanupUrl(manifest.NewSiteDomain);
 
                     if (!string.IsNullOrEmpty(manifest.NewSiteDomain))
                     {
-                        newUrl = url.SwapHostname(manifest.NewSiteDomain);
+                        newUrl = newUrl.SwapHostname(manifest.NewSiteDomain);
                     }
 
                     //Log($"Convert {value.Url} to {newUrl}");

@@ -33,6 +33,42 @@ namespace Spider.Extensions
             return list;
         }
 
+        public static string CleanupUrl(this string oldUrl, string newHostname)
+        {
+	        string testUrl;
+
+            // if not, try to add a domain.
+            if (oldUrl.StartsWith("/"))
+            {
+	            if (newHostname.EndsWith("/"))
+	            {
+		            testUrl = newHostname.Substring(0, newHostname.Length - 1) + oldUrl;
+                }
+	            else
+	            {
+		            testUrl = newHostname + oldUrl;
+                }
+            }
+	        else
+            {
+	            testUrl = oldUrl;
+            }
+
+	        var oldUri = new Uri(testUrl);
+	        var newHostnameUri = new Uri(newHostname);
+	        string newUrl;
+	        if (newHostnameUri.Port != 80 && newHostnameUri.Port != 443)
+	        {
+		        newUrl = $"{newHostnameUri.Scheme}://{newHostnameUri.Host}:{newHostnameUri.Port}{oldUri.PathAndQuery}";
+	        }
+	        else
+	        {
+		        newUrl = $"{newHostnameUri.Scheme}://{newHostnameUri.Host}{oldUri.PathAndQuery}";
+	        }
+
+	        return newUrl;
+        }
+
         public static string SwapHostname(this string oldUrl, string newHostname)
         {
             var oldUri = new Uri(oldUrl);
