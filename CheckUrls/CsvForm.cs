@@ -10,6 +10,7 @@ using CheckUrls.Models;
 using CheckUrls.Models.Csv;
 using Spider.Extensions;
 using Spider.Models;
+using Spider.Models.Csv;
 
 namespace CheckUrls
 {

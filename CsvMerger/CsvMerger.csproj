@@ -4,18 +4,14 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{9821E474-8EAA-4AE2-BB64-297559D4F03F}</ProjectGuid>
+    <ProjectGuid>{DA6D32B8-84C9-48FD-8F40-810BD3FAFB8D}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>CheckUrls</RootNamespace>
-    <AssemblyName>CheckUrls</AssemblyName>
+    <RootNamespace>CsvMerger</RootNamespace>
+    <AssemblyName>CsvMerger</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <SccProjectName>SAK</SccProjectName>
-    <SccLocalPath>SAK</SccLocalPath>
-    <SccAuxPath>SAK</SccAuxPath>
-    <SccProvider>SAK</SccProvider>
-    <TargetFrameworkProfile />
+    <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -37,13 +33,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.DirectoryServices" />
-    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -55,30 +46,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ResultReporter.cs" />
-    <Compile Include="SitemapForm.cs">
+    <Compile Include="MergeForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SitemapForm.Designer.cs">
-      <DependentUpon>SitemapForm.cs</DependentUpon>
+    <Compile Include="MergeForm.Designer.cs">
+      <DependentUpon>MergeForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Models\Csv\CsvGoogleTopTarget.cs" />
-    <Compile Include="Models\Csv\CsvGoogleCrawlError.cs" />
-    <Compile Include="CsvForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="CsvForm.Designer.cs">
-      <DependentUpon>CsvForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Models\CheckUrlsSettings.cs" />
+    <Compile Include="Models\CsvMergerSettings.cs" />
+    <Compile Include="Models\Workload.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Models\WorkLoad.cs" />
-    <EmbeddedResource Include="SitemapForm.resx">
-      <DependentUpon>SitemapForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="CsvForm.resx">
-      <DependentUpon>CsvForm.cs</DependentUpon>
+    <Compile Include="ResultReporter.cs" />
+    <EmbeddedResource Include="MergeForm.resx">
+      <DependentUpon>MergeForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -88,9 +68,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
     </Compile>
-    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -100,12 +78,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <None Include="Other\SearchResultEmpty.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Other\SearchResult.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -116,6 +88,5 @@
       <Name>Spider</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

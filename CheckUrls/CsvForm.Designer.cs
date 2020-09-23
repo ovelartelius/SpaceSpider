@@ -310,14 +310,14 @@
 			// loadSettingsToolStripMenuItem
 			// 
 			this.loadSettingsToolStripMenuItem.Name = "loadSettingsToolStripMenuItem";
-			this.loadSettingsToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
+			this.loadSettingsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
 			this.loadSettingsToolStripMenuItem.Text = "&Load settings";
 			this.loadSettingsToolStripMenuItem.Click += new System.EventHandler(this.loadSettingsToolStripMenuItem_Click);
 			// 
 			// saveSettingsToolStripMenuItem
 			// 
 			this.saveSettingsToolStripMenuItem.Name = "saveSettingsToolStripMenuItem";
-			this.saveSettingsToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
+			this.saveSettingsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
 			this.saveSettingsToolStripMenuItem.Text = "&Save settings";
 			this.saveSettingsToolStripMenuItem.Click += new System.EventHandler(this.saveSettingsToolStripMenuItem_Click);
 			// 
@@ -374,7 +374,7 @@
 			this.tabPageBasic.Controls.Add(this.textBoxNewSiteDomain);
 			this.tabPageBasic.Location = new System.Drawing.Point(4, 22);
 			this.tabPageBasic.Name = "tabPageBasic";
-			this.tabPageBasic.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+			this.tabPageBasic.Padding = new System.Windows.Forms.Padding(3);
 			this.tabPageBasic.Size = new System.Drawing.Size(462, 508);
 			this.tabPageBasic.TabIndex = 0;
 			this.tabPageBasic.Text = "Basic";
@@ -447,7 +447,7 @@
 			this.tabPageSearch.Controls.Add(this.textBoxSearchUrl);
 			this.tabPageSearch.Location = new System.Drawing.Point(4, 22);
 			this.tabPageSearch.Name = "tabPageSearch";
-			this.tabPageSearch.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+			this.tabPageSearch.Padding = new System.Windows.Forms.Padding(3);
 			this.tabPageSearch.Size = new System.Drawing.Size(462, 508);
 			this.tabPageSearch.TabIndex = 1;
 			this.tabPageSearch.Text = "Search";
