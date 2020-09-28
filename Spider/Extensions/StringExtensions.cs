@@ -35,36 +35,55 @@ namespace Spider.Extensions
 
         public static string CleanupUrl(this string oldUrl, string newHostname)
         {
-	        string testUrl;
+	        var testUrl = string.Empty;
+            var newUrl = string.Empty;
 
-            // if not, try to add a domain.
-            if (oldUrl.StartsWith("/"))
+            try
             {
-	            if (newHostname.EndsWith("/"))
-	            {
-		            testUrl = newHostname.Substring(0, newHostname.Length - 1) + oldUrl;
+                if (oldUrl.StartsWith("\"") && oldUrl.EndsWith("\""))
+                {
+                    oldUrl = oldUrl.Substring(1, oldUrl.Length - 2);
                 }
-	            else
-	            {
-		            testUrl = newHostname + oldUrl;
-                }
-            }
-	        else
-            {
-	            testUrl = oldUrl;
-            }
 
-	        var oldUri = new Uri(testUrl);
-	        var newHostnameUri = new Uri(newHostname);
-	        string newUrl;
-	        if (newHostnameUri.Port != 80 && newHostnameUri.Port != 443)
-	        {
-		        newUrl = $"{newHostnameUri.Scheme}://{newHostnameUri.Host}:{newHostnameUri.Port}{oldUri.PathAndQuery}";
-	        }
-	        else
-	        {
-		        newUrl = $"{newHostnameUri.Scheme}://{newHostnameUri.Host}{oldUri.PathAndQuery}";
-	        }
+                if (oldUrl.StartsWith("'") && oldUrl.EndsWith("'"))
+                {
+                    oldUrl = oldUrl.Substring(1, oldUrl.Length - 2);
+                }
+
+                // if not, try to add a domain.
+                if (oldUrl.StartsWith("/"))
+                {
+                    if (newHostname.EndsWith("/"))
+                    {
+                        testUrl = newHostname.Substring(0, newHostname.Length - 1) + oldUrl;
+                    }
+                    else
+                    {
+                        testUrl = newHostname + oldUrl;
+                    }
+                }
+                else
+                {
+                    testUrl = oldUrl;
+                }
+
+                var oldUri = new Uri(testUrl);
+                var newHostnameUri = new Uri(newHostname);
+
+                if (newHostnameUri.Port != 80 && newHostnameUri.Port != 443)
+                {
+                    newUrl = $"{newHostnameUri.Scheme}://{newHostnameUri.Host}:{newHostnameUri.Port}{oldUri.PathAndQuery}";
+                }
+                else
+                {
+                    newUrl = $"{newHostnameUri.Scheme}://{newHostnameUri.Host}{oldUri.PathAndQuery}";
+                }
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
 
 	        return newUrl;
         }

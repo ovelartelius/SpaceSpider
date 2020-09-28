@@ -235,13 +235,16 @@ namespace CsvMerger
 			{
 				var newUrl = tempUrl.CleanupUrl(_workLoad.NewSiteDomain);
 
-				if (!string.IsNullOrEmpty(_workLoad.NewSiteDomain))
-				{
-					newUrl = newUrl.SwapHostname(_workLoad.NewSiteDomain);
-				}
+                if (!string.IsNullOrEmpty(newUrl))
+                {
+                    if (!string.IsNullOrEmpty(_workLoad.NewSiteDomain))
+                    {
+                        newUrl = newUrl.SwapHostname(_workLoad.NewSiteDomain);
+                    }
 
-				_workLoad.Urls.Add(newUrl);
-			}
+                    _workLoad.Urls.Add(newUrl);
+                }
+            }
 
 			// Remove all empty
 			_workLoad.Urls = _workLoad.Urls.Where(x => !string.IsNullOrEmpty(x)).ToList();
