@@ -193,8 +193,8 @@ namespace CheckUrls
             sbRawData.AppendLine($"Url;StatusCode;Description;HistoricHits;Erroneous");
             foreach (var item in workLoad.SpiderPageLinks)
             {
-                sb.AppendLine($"{item.Url},{item.StatusCode},{item.Description},{item.HistoricHits},{item.Erroneous}");
-                sbRawData.AppendLine($"{item.Url};{item.StatusCode};{item.Description};{item.HistoricHits};{item.Erroneous}");
+                sb.AppendLine($"{item.Url},{item.StatusCode},{item.Description},{item.HistoricHits},{item.Erroneous};{item.Time}");
+                sbRawData.AppendLine($"{item.Url};{item.StatusCode};{item.Description};{item.HistoricHits};{item.Erroneous};{item.Time}");
             }
             SaveToExcel(dateTimeString, "RawData", sbRawData, workLoad.OutputDirectory);
 
