@@ -222,10 +222,11 @@ namespace CsvMerger
 
 		private void backgroundWorkerLoadCsv_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
 		{
-			//
-			// Receive the result from DoWork, and display it.
-			//
-			var tempUrls = e.Result as List<string>;
+            var spider = new Spider.Spider();
+            //
+            // Receive the result from DoWork, and display it.
+            //
+            var tempUrls = e.Result as List<string>;
 
 			_workLoad.Urls = new List<string>();
 
@@ -233,16 +234,19 @@ namespace CsvMerger
 
 			foreach (var tempUrl in tempUrls)
 			{
-				var newUrl = tempUrl.CleanupUrl(_workLoad.NewSiteDomain);
-
-                if (!string.IsNullOrEmpty(newUrl))
+                if (!string.IsNullOrEmpty(tempUrl))
                 {
-                    if (!string.IsNullOrEmpty(_workLoad.NewSiteDomain))
-                    {
-                        newUrl = newUrl.SwapHostname(_workLoad.NewSiteDomain);
-                    }
+                    var newUrl = tempUrl.CleanupUrl(_workLoad.NewSiteDomain);
 
-                    _workLoad.Urls.Add(newUrl);
+                    if (!string.IsNullOrEmpty(newUrl) && !spider.ShouldUrlBeIgnored(newUrl, _workLoad.IgnorePatterns))
+                    {
+                        if (!string.IsNullOrEmpty(_workLoad.NewSiteDomain))
+                        {
+                            newUrl = newUrl.SwapHostname(_workLoad.NewSiteDomain);
+                        }
+
+                        _workLoad.Urls.Add(newUrl);
+                    }
                 }
             }
 
@@ -258,7 +262,7 @@ namespace CsvMerger
 
 			//Save the result to a CSV file.
 			var resultReporter = new ResultReporter();
-			resultReporter.CreateResult(_workLoad);
+            resultReporter.CreateResult(_workLoad);
 
 			Log("The end!");
 			buttonStartWork.Enabled = true;
