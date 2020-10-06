@@ -188,9 +188,9 @@ namespace CheckUrls
             sb.AppendLine("");
             sb.AppendLine("");
             sb.AppendLine("Rawdata:");
-            sb.AppendLine($"Url,StatusCode,Description,HistoricHits,Erroneous");
+            sb.AppendLine($"Url,StatusCode,Description,HistoricHits,Erroneous,ResponseTime");
             var sbRawData = new StringBuilder();
-            sbRawData.AppendLine($"Url;StatusCode;Description;HistoricHits;Erroneous");
+            sbRawData.AppendLine($"Url;StatusCode;Description;HistoricHits;Erroneous,ResponseTime");
             foreach (var item in workLoad.SpiderPageLinks)
             {
                 sb.AppendLine($"{item.Url},{item.StatusCode},{item.Description},{item.HistoricHits},{item.Erroneous};{item.Time}");
@@ -223,7 +223,7 @@ namespace CheckUrls
 
         private void CreateResultFile(StringBuilder sb, string dateTime, string outputDirectory)
         {
-            string filePath = $"{outputDirectory}\\Result_{dateTime}.txt";
+            var filePath = $"{outputDirectory}\\Result_{dateTime}.txt";
 
             if (File.Exists(filePath))
             {
@@ -232,7 +232,7 @@ namespace CheckUrls
             }
 
             //this code section write stringbuilder content to physical text file.
-            using (StreamWriter swriter = File.CreateText(filePath))
+            using (var swriter = File.CreateText(filePath))
             {
                 swriter.Write(sb.ToString());
             }
