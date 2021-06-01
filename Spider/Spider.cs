@@ -285,6 +285,54 @@ namespace Spider
             return checkUrlResult;
         }
 
+        public PsCheckUrlResult PsCheckUrl(string url, string userAgent = "")
+        {
+	        var valid = ValidateUrl(url);
+
+            var manifest = new CheckUrlManifest
+	        {
+		        Url = url,
+		        UserAgent = userAgent
+	        };
+
+            var result = CreateCheckUrlResult(manifest);
+
+            if (valid)
+            {
+	            result = CheckUrl(manifest);
+            }
+            else
+            {
+	            result.Erroneous = true;
+            }
+
+            var checkUrlResult = new PsCheckUrlResult
+	        {
+		        Content = result.Content,
+		        Url = result.Url,
+		        StatusCode = ((int)result.StatusCode),
+		        Description = result.Description,
+		        Redirect = result.Redirect,
+		        Erroneous = result.Erroneous,
+		        Time = result.Time,
+		        Size = result.Size,
+		        ContentType = result.ContentType,
+		        Server = result.Server,
+		        HistoricHits = result.HistoricHits,
+		        Ignored = result.Ignored,
+		        IgnoredLinks = result.IgnoredLinks,
+		        ErroneousLinks = result.ErroneousLinks,
+		        DestinationUrls = result.DestinationUrls,
+		        ExternalUrls = result.ExternalUrls,
+                IsRobotsTxt = result.IsRobotsTxt,
+                IsSitemapXml = result.IsSitemapXml,
+                IsSiteDomain = result.IsSiteDomain,
+                HasEpiserverLicenseProblem = result.HasEpiserverLicenseProblem
+            };
+
+	        return checkUrlResult;
+        }
+
         public CheckUrlResult CheckUrl(CheckUrlManifest manifest)
         {
             var checkUrlResult = CreateCheckUrlResult(manifest);

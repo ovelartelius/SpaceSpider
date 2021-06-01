@@ -15,10 +15,10 @@ namespace Crawler
             var spider = new Spider.Spider();
             var checkUrlResult = spider.CheckUrl(checkUrlManifest);
 
-            if (checkUrlResult.Url == "https://seb.no/privat")
-            {
-                var stop = true;
-            }
+            //if (checkUrlResult.Url == "https://seb.no/privat")
+            //{
+            //    var stop = true;
+            //}
 
             if (checkUrlResult.StatusCode == HttpStatusCode.NotFound)
             {

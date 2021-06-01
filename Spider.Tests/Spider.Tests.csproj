@@ -53,10 +53,15 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Spider\Models\CheckUrlManifestTests.cs" />
     <Compile Include="Spider\HtmlParserTests.cs" />
+    <Compile Include="Spider\SitemapTests.cs" />
+    <Compile Include="Spider\RobotsTxtTests.cs" />
     <Compile Include="Spider\SpiderTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="httpssebnoprivat.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="robots-sebno.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="packages.config" />

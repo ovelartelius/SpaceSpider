@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
 namespace Spider
@@ -40,6 +42,48 @@ namespace Spider
             }
 
             return sitemapUrls;
+        }
+
+        /// <summary>
+        /// Download the specified robots.txt and search the content for a sitemap.xml reference.
+        /// </summary>
+        /// <param name="robotsTxtUrl">The URL to the robots.txt.</param>
+        /// <returns></returns>
+        public static string GetSitemapUrlFromRobotsTxt(string robotsTxtUrl)
+        {
+	        var robotsTxtContent = new WebClient().DownloadString(robotsTxtUrl);
+
+	        var sitemapUrl = string.Empty;
+
+	        sitemapUrl = ParseSitemapUrl(robotsTxtContent);
+
+            return sitemapUrl;
+        }
+
+        public static string ParseSitemapUrl(string robotsTxtContent)
+        {
+	        var sitemapUrl = string.Empty;
+
+	        if (robotsTxtContent.ToLower().Contains("sitemap"))
+	        {
+		        robotsTxtContent = "\r\n" + robotsTxtContent;
+		        var pattern = "^[S|s]itemap: (.*)$";
+		        var match = Regex.Match(robotsTxtContent, pattern, RegexOptions.Multiline);
+		        if (match.Success)
+		        {
+			        sitemapUrl = match.Groups[1].Value;
+			        if (sitemapUrl.Contains("\r"))
+			        {
+				        sitemapUrl = sitemapUrl.Replace("\r", "");
+			        }
+			        if (sitemapUrl.Contains("\n"))
+			        {
+				        sitemapUrl = sitemapUrl.Replace("\n", "");
+			        }
+                }
+            }
+
+	        return sitemapUrl;
         }
 
         private static List<string> GetUrlsFromDocument(XDocument document)

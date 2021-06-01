@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Spider.Extensions;
 
 namespace Spider.Tests.Spider
@@ -38,5 +37,6 @@ namespace Spider.Tests.Spider
             //Assert
             Assert.IsTrue(result);
         }
+
     }
 }

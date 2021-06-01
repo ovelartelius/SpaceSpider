@@ -1,0 +1,11 @@
+﻿Sitemap: https://seb.se/MogulSeoManagerSitemap.aspx?https=true
+
+User-agent: *
+Allow: /
+Disallow: /pow/
+Disallow: /driftinformation/
+Disallow: /no-index/
+Disallow: /allianser/
+Disallow: /welcome-to-seb/
+Disallow: /hidden-pages/
+Disallow: /systemsidor/

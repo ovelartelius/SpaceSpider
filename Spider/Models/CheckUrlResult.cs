@@ -74,5 +74,16 @@ namespace Spider.Models
         public List<string> DestinationUrls { get; set; }
 
         public List<string> ExternalUrls { get; set; }
+
+        public bool IsRobotsTxt => Uri.LocalPath.ToLower() == "/robots.txt";
+
+        public bool IsSitemapXml => Content.Contains("<urlset");
+
+        /// <summary>
+        /// True of false if the URL is the startpage/domain root ex: https://mysite.com/
+        /// </summary>
+        public bool IsSiteDomain => Uri.LocalPath == "/";
+
+        public bool HasEpiserverLicenseProblem => Content.Contains("NOT FOR COMMERCIAL USE");
     }
 }

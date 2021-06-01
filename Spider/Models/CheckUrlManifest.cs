@@ -6,9 +6,12 @@ namespace Spider.Models
     {
         public CheckUrlManifest()
         {
-            ContentTypesToDownload = new List<string>();
-            ContentTypesToDownload.Add("text/");
-            ContentTypesToDownload.Add("application/javascript");
+			ContentTypesToDownload = new List<string>
+			{
+				"text/",
+				"application/javascript"
+			};
+			SourceUrls = new List<string>();
         }
 
         public string Url { get; set; }
