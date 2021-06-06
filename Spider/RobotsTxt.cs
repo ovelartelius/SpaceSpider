@@ -17,10 +17,10 @@
 			return result;
 		}
 
-		public bool DisallowAll(string url)
-		{
-			//User-agent: *
-			//Disallow: /
-		}
+		//public bool DisallowAll(string url)
+		//{
+		//	//User-agent: *	
+		//	//Disallow: /
+		//}
 	}
 }

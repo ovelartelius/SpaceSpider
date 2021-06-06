@@ -15,6 +15,8 @@ namespace Spider.Models
             IgnoredLinks = new List<string>();
             DestinationUrls = new List<string>();
             ExternalUrls = new List<string>();
+            IframeUrls = new List<string>();
+            ScriptUrls = new List<string>();
         }
 
         public string Url { get; set; }
@@ -74,6 +76,10 @@ namespace Spider.Models
         public List<string> DestinationUrls { get; set; }
 
         public List<string> ExternalUrls { get; set; }
+
+        public List<string> IframeUrls { get; set; }
+
+        public List<string> ScriptUrls { get; set; }
 
         public bool IsRobotsTxt => Uri.LocalPath.ToLower() == "/robots.txt";
 

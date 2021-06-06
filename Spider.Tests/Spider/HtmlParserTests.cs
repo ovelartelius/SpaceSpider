@@ -101,5 +101,52 @@ namespace Spider.Tests.Spider
             Assert.AreEqual("http://www.sebgroup.com", linkList[47]);
             Assert.AreEqual("#page27853", linkList[48]);
         }
+
+        [TestMethod]
+        public void GetAllIframes_FindNone()
+        {
+            //Arrange
+            var checkUrlResult = Json.LoadJson<CheckUrlResult>("httpssebnoprivat.json");
+            var content = checkUrlResult.Content;
+
+            //Act
+            var linkList = HtmlParser.GetAllIframes(content);
+
+            //Assert
+            Assert.IsNotNull(linkList);
+            Assert.AreEqual(0, linkList.Count);
+        }
+
+        [TestMethod]
+        public void GetAllIframes_FindOne()
+        {
+	        //Arrange
+	        var checkUrlResult = Json.LoadJson<CheckUrlResult>("httpssebseiframepage.json");
+	        var content = checkUrlResult.Content;
+
+	        //Act
+	        var linkList = HtmlParser.GetAllIframes(content);
+
+	        //Assert
+	        Assert.IsNotNull(linkList);
+            Assert.AreEqual(1, linkList.Count);
+            Assert.AreEqual("https://www.seb.se/pow/apps/enklalanet/vadkostar.aspx", linkList[0]);
+        }
+
+        ///UI/V2/scripts/minified/mainheader.min.js?v=111819022804
+        [TestMethod]
+        public void GetAllScripts_Test1()
+        {
+	        //Arrange
+	        var checkUrlResult = Json.LoadJson<CheckUrlResult>("httpssebnoprivat.json");
+	        var content = checkUrlResult.Content;
+
+	        //Act
+	        var linkList = HtmlParser.GetAllScripts(content);
+
+	        //Assert
+	        Assert.IsNotNull(linkList);
+	        Assert.AreEqual(4, linkList.Count);
+        }
     }
 }
