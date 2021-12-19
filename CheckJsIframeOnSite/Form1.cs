@@ -25,8 +25,41 @@ namespace CheckJsIframeOnSite
 		{
 			//var siteSitemapUrl = "https://seb.se/MogulSeoManagerSitemap.aspx?https=true";
 			//var baseSiteUrl = "https://seb.se";
-			var siteSitemapUrl = "https://sebgroup.com/sitemap.ashx";
+			//var folder = @"E:\dev\temp\Sebse_20210621_1430\";
+
+			var siteSitemapUrl = "https://sebgroup.com/MogulSeoManagerSitemap.aspx?https=true";
 			var baseSiteUrl = "https://sebgroup.com";
+			var folder = @"E:\dev\temp\Sebgroup_20210630_1130\";
+
+			//var siteSitemapUrl = "https://seb.ie/MogulSeoManagerSitemap.aspx?https=true";
+			//var baseSiteUrl = "https://seb.ie";
+			//var folder = @"E:\dev\temp\Sebie_20210621_1430\";
+
+			//var siteSitemapUrl = "https://seb.fi/MogulSeoManagerSitemap.aspx?https=true";
+			//var baseSiteUrl = "https://seb.fi";
+			//var folder = @"E:\dev\temp\Sebfi_20210621_1430\";
+
+			//var siteSitemapUrl = "https://seb.no/MogulSeoManagerSitemap.aspx?https=true";
+			//var baseSiteUrl = "https://seb.np";
+			//var folder = @"E:\dev\temp\Sebno_20210621_1430\";
+
+			//var siteSitemapUrl = "https://seb.dk/MogulSeoManagerSitemap.aspx?https=true";
+			//var baseSiteUrl = "https://seb.dk";
+			//var folder = @"E:\dev\temp\Sebdk_20210621_1430\";
+
+			//var siteSitemapUrl = "https://seb.de/MogulSeoManagerSitemap.aspx?https=true";
+			//var baseSiteUrl = "https://seb.de";
+			//var folder = @"E:\dev\temp\Sebde_20210621_1430\";
+
+			//var siteSitemapUrl = "https://sebgroup.lu/MogulSeoManagerSitemap.aspx?https=true";
+			//var baseSiteUrl = "https://sebgroup.lu";
+			//var folder = @"E:\dev\temp\Sebgrouplu_20210621_1430\";
+
+			if (!Directory.Exists(folder))
+			{
+				// Create the folder if dows not exist.
+				Directory.CreateDirectory(folder);
+			}
 
 			var siteUrls = Spider.Sitemap.GetSitemapUrls(siteSitemapUrl);
 
@@ -155,30 +188,43 @@ namespace CheckJsIframeOnSite
 				iterator++;
 			}
 
-			var folder = @"E:\dev\temp\Sebgroup_20210604_1600\";
+			var scriptCsv = new StringBuilder();
+			scriptCsv.AppendLine($"SiteUrl;IFrames;Script");
+
+
 			var jsonResult = Json.ToJson(list);
 			File.WriteAllText($"{folder}SebScriptAndIframes.json", jsonResult);
+			AppendSb(list, scriptCsv);
+
 
 			jsonResult = Json.ToJson(listCreo);
 			File.WriteAllText($"{folder}Seb_CreoPages.json", jsonResult);
+			AppendSb(listCreo, scriptCsv);
 
 			jsonResult = Json.ToJson(listContentSpa);
 			File.WriteAllText($"{folder}Seb_SpaPages.json", jsonResult);
+			AppendSb(listContentSpa, scriptCsv);
 
 			jsonResult = Json.ToJson(listPow);
 			File.WriteAllText($"{folder}Seb_PwoPages.json", jsonResult);
+			AppendSb(listPow, scriptCsv);
 
 			jsonResult = Json.ToJson(listYoutube);
 			File.WriteAllText($"{folder}Seb_YoutubePages.json", jsonResult);
+			AppendSb(listYoutube, scriptCsv);
 
 			jsonResult = Json.ToJson(listLibsyn);
 			File.WriteAllText($"{folder}Seb_LibsynPages.json", jsonResult);
+			AppendSb(listLibsyn, scriptCsv);
 
 			jsonResult = Json.ToJson(listQform);
 			File.WriteAllText($"{folder}Seb_QFormPages.json", jsonResult);
+			AppendSb(listQform, scriptCsv);
 
 			jsonResult = Json.ToJson(listAppIntApps);
 			File.WriteAllText($"{folder}Seb_AppIntApps.json", jsonResult);
+			AppendSb(listAppIntApps, scriptCsv);
+			File.WriteAllText($"{folder}Seb_scripts.csv", scriptCsv.ToString());
 
 			var appIntCsv = new StringBuilder();
 			appIntCsv.AppendLine($"SiteUrl;AppIntName;IFrames;Script");
@@ -213,6 +259,24 @@ namespace CheckJsIframeOnSite
 			MessageBox.Show("Done");
 		}
 
+		private void AppendSb(List<ResultModel> list, StringBuilder stringBuilder)
+		{
+			foreach (var listScript in list)
+			{
+				var scripts = string.Empty;
+				if (listScript.Scripts != null && listScript.Scripts.Any())
+				{
+					scripts = string.Join(",", listScript.Scripts);
+				}
+				var frames = string.Empty;
+				if (listScript.Iframes != null && listScript.Iframes.Any())
+				{
+					frames = string.Join(",", listScript.Iframes);
+				}
+				stringBuilder.AppendLine($"{listScript.PageUrl};{frames};{scripts}");
+			}
+		}
+
 		private List<string> FindDtmScripts(List<string> scriptList)
 		{
 			var newList = new List<string>();
@@ -236,7 +300,7 @@ namespace CheckJsIframeOnSite
 		{
 			var newList = new List<string>();
 
-			var currentSiteVersion = "1.0.0.672";
+			var currentSiteVersion = "1.0.0.708";
 
 			foreach (var scriptUrl in scriptList)
 			{
@@ -263,8 +327,16 @@ namespace CheckJsIframeOnSite
 				if (scriptUrl == $"/Static/SPA/seb-form/polyfills.{currentSiteVersion}.js") { ignore = true; }
 				if (scriptUrl == $"/Static/SPA/seb-form/scripts.{currentSiteVersion}.js") { ignore = true; }
 				if (scriptUrl == $"/Static/SPA/seb-form/main.{currentSiteVersion}.js") { ignore = true; }
-
-
+				//SEB
+				if (scriptUrl == $"https://sebgroup.com/public-content/static/js/main.js") { ignore = true; }
+				if (scriptUrl == $"/UI/V2/scripts/minified/mainheader.min.js?v=051021041114") { ignore = true; }
+				if (scriptUrl == $"/Dtm/Seb-Xx/71e07657e0b1660036c6a3a1ee5aeea1a106b3e8/satelliteLib-0fb17ed6fb94a3cfcedc625cab4cdfe61592d029.js") { ignore = true; }
+				if (scriptUrl == $"/UI/V2/scripts/Libraries/jquery-1.12-stable.min.js") { ignore = true; }
+				if (scriptUrl == $"/UI/V2/scripts/minified/main.min.js?v=051021041114") { ignore = true; }
+				if (scriptUrl == $"/public-content/static/js/main.js") { ignore = true; }
+				if (scriptUrl == $"/UI/V2/scripts/minified/videobundle.min.js?d=210510161114") { ignore = true; }
+				if (scriptUrl == $"/UI/V2/scripts/minified/mediabundle.min.js?d=210510161114") { ignore = true; }
+				
 				if (!ignore)
 				{
 					newList.Add(scriptUrl);
