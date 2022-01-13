@@ -55,7 +55,32 @@ namespace Spider
 
         }
 
-        private const string _scriptRegexPattern = "<script.*?src=\"(.*?)\".*?>";
+        private const string _tildeLinksRegexPattern = "~\\/link\\/.*?.aspx";
+        public static List<string> GetAllTildeLinks(string content, string tildeLinksRegexPattern = "")
+        {
+	        var linkList = new List<string>();
+	        if (string.IsNullOrEmpty(tildeLinksRegexPattern))
+	        {
+		        tildeLinksRegexPattern = _tildeLinksRegexPattern;
+	        }
+
+	        if (!string.IsNullOrEmpty(content))
+	        {
+		        var matches = Regex.Matches(content, tildeLinksRegexPattern, RegexOptions.IgnoreCase);
+
+		        foreach (Match match in matches)
+		        {
+			        var link = match.Value;
+
+			        linkList.Add(link);
+		        }
+	        }
+
+	        return linkList;
+
+        }
+
+		private const string _scriptRegexPattern = "<script.*?src=\"(.*?)\".*?>";
         public static List<string> GetAllScripts(string content, string scriptRegexPattern = "")
         {
 	        var linkList = new List<string>();
