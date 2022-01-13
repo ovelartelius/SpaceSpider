@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Linq;
 using System.Net;
 
 namespace Spider.Models
@@ -17,6 +18,7 @@ namespace Spider.Models
             ExternalUrls = new List<string>();
             IframeUrls = new List<string>();
             ScriptUrls = new List<string>();
+            TildeLinks = new List<string>();
         }
 
         public string Url { get; set; }
@@ -81,6 +83,11 @@ namespace Spider.Models
 
         public List<string> ScriptUrls { get; set; }
 
+        /// <summary>
+        /// List of all links in content that starts with '~/link/*.aspx'
+        /// </summary>
+        public List<string> TildeLinks { get; set; }
+
         public bool IsRobotsTxt => Uri.LocalPath.ToLower() == "/robots.txt";
 
         public bool IsSitemapXml => Content.Contains("<urlset");
@@ -91,5 +98,7 @@ namespace Spider.Models
         public bool IsSiteDomain => Uri.LocalPath == "/";
 
         public bool HasEpiserverLicenseProblem => Content.Contains("NOT FOR COMMERCIAL USE");
+
+        public bool HasEpiserverTildeLinkProblem => TildeLinks.Any();
     }
 }

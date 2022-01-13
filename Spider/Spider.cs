@@ -160,10 +160,7 @@ namespace Spider
                 }
 
                 // Only download content for ContentType that are related to HTml, text, xml etc.
-                //if (checkUrlResult.ContentType.StartsWith("text/") ||
-                //    checkUrlResult.ContentType.StartsWith("application/javascript")
                 if(ShouldContentBeDownloaded(checkUrlResult.ContentType, manifest.ContentTypesToDownload))
-                //) //TODO: LOW: Detta bör sättas i manifestet så att man kan styra vilka type man vill ladda ned.
                 {
 
                     var responseStream = webResponse.GetResponseStream();
