@@ -16,13 +16,14 @@ namespace FindTildeLinksOnSite
 			//var baseSiteUrl = "https://sebgroup.com";
 			//var folder = @"E:\dev\temp\Sebgroup_tildelinks_20220113_1130\";
 
-			var siteSitemapUrl = "https://seb.ie/MogulSeoManagerSitemap.aspx?https=true";
-			var baseSiteUrl = "https://seb.ie";
+			var siteSitemapUrl = "https://www.porsche.com/sitemap.xml";
+			var baseSiteUrl = "https://www.porsche.com";
+			var baseName = baseSiteUrl.Replace(":", "").Replace("/", "").Replace(".", "");
 			var folder = @"E:\dev\temp\Tildelinks\";
 
 			if (!Directory.Exists(folder))
 			{
-				// Create the folder if dows not exist.
+				// Create the folder if does not exist.
 				Directory.CreateDirectory(folder);
 			}
 
@@ -79,7 +80,7 @@ namespace FindTildeLinksOnSite
 				}
 				
 			}
-			File.WriteAllText($"{folder}TildeLinks.csv", linkCsv.ToString());
+			File.WriteAllText($"{folder}TildeLinks_{baseName}.csv", linkCsv.ToString());
 
 			Console.WriteLine("Done");
 		}
